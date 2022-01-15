@@ -1,0 +1,23 @@
+{
+  "name": "mapty-portfolio-project",
+  "version": "1.0.0",
+  "description": "",
+  "default": "index.html",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeevDevs/mapty-portfolio-project.git"
+  },
+  "author": "Jonas Shmedtmann and Dmitriy Vnuchkov",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/DeevDevs/mapty-portfolio-project/issues"
+  },
+  "homepage": "https://github.com/DeevDevs/mapty-portfolio-project#readme"
+}
