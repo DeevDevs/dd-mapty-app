@@ -43,15 +43,13 @@ a:visited {
 
 /* TOP MENU BOX */
 .top-menu {
+  position: absolute;
   display: flex;
+  height: 11.2rem;
+  max-height: 11.2rem;
   flex-direction: row;
   justify-content: flex-end;
-  /* position: absolute;
-  top: 0;
-  left: 0;
-  margin-left: 2.5rem;
-  padding-left: 5rem;
-  margin-top: 2.5rem; */
+  width: 47rem;
   background-color: var(--color-dark--1);
   z-index: 800;
   vertical-align: middle;
@@ -95,9 +93,11 @@ a:visited {
 /* SIDEBAR */
 .sidebar {
   position: absolute;
-  height: calc(100vh - 5rem);
-  width: 50rem;
-  min-width: 50rem;
+  bottom: 2.5rem;
+  height: calc(100vh - 5rem - 11.2rem);
+  max-height: calc(100vh - 5rem - 11.2rem);
+  width: 47rem;
+  min-width: 47rem;
   z-index: 800;
   flex-basis: 50rem;
   background-color: var(--color-dark--1);

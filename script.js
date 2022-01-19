@@ -121,7 +121,7 @@ class App {
     drawEraseBtn.addEventListener('click', this._eraseDrawing.bind(this)); // erase the path drawn by the user
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
-    toggleBtn.addEventListener('click', this.toggleWindow.bind(this));
+    toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
     /// ------------------------------------ ///
   }
 
