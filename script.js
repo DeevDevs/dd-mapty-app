@@ -36,6 +36,8 @@ const weatherTemp = document.querySelector('.weather__temp');
 const weatherWind = document.querySelector('.weather__wind');
 const weatherCond = document.querySelector('.weather__cond');
 const weatherData = document.querySelectorAll('.weather__data');
+const toggleBtn = document.querySelector('.toggle-button');
+console.log(toggleBtn);
 ///----------------------------------------------------///
 
 class Workout {
@@ -118,6 +120,8 @@ class App {
     deleteAllBtn.addEventListener('click', this._deleteAllWorkouts.bind(this)); // delete all workouts
     drawEraseBtn.addEventListener('click', this._eraseDrawing.bind(this)); // erase the path drawn by the user
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
+    //makes entire functional sidebar hidden
+    toggleBtn.addEventListener('click', this.toggleWindow.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -814,6 +818,14 @@ class App {
   }
 
   ///////  Supporting Functions  ///////
+
+  _toggleWindow() {
+    console.log('Button Works');
+    document.querySelector('.dropdown').classList.toggle('hidden');
+    console.log(document.querySelector('.dropdown'));
+    document.querySelector('.workouts').classList.toggle('hidden');
+    console.log(document.querySelector('.workouts'));
+  }
 
   displayButtons() {
     sortBtn.classList.remove('hidden');
