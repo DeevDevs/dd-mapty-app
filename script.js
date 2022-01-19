@@ -476,6 +476,7 @@ class App {
 
     //store and render workouts (in the sidebar)
     this.#workouts = data;
+    console.log(data);
     this.#workouts.forEach(wk => {
       this._renderWorkout(wk);
     });
