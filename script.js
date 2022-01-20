@@ -31,6 +31,7 @@ const sortBtn = document.querySelector('.dropbtn');
 const deleteAllBtn = document.querySelector('.delete_all');
 const showAllBtn = document.querySelector('.show_all');
 const saveWorkoutBtn = document.querySelector('.save_workout');
+const workoutNowBtn = document.querySelector('.work__now');
 const weatherDesc = document.querySelector('.weather__desc');
 const weatherModal = document.querySelector('.weather__window');
 const weatherTemp = document.querySelector('.weather__temp');
@@ -39,6 +40,7 @@ const weatherCond = document.querySelector('.weather__cond');
 const weatherData = document.querySelectorAll('.weather__data');
 const toggleBtn = document.querySelector('.toggle-button');
 const sidebar = document.querySelector('.sidebar');
+
 ///----------------------------------------------------///
 
 class Workout {
@@ -109,6 +111,9 @@ class App {
     this._getLocalStorage();
     //Add Event Listeners
     form.addEventListener('submit', this._newWorkout.bind(this)); // make the form submission create a new workout
+
+    saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this)); // make the form submission create a new workout
+
     inputType.addEventListener('change', this._toggleElevationField); // switch the workout type
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this)); // move to the PopUp once I click on the workout
 
@@ -123,7 +128,10 @@ class App {
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
+    //check width to set the display of sidebar
     window.addEventListener('load', this._checkWidth.bind(this));
+    //save workout if smartphone
+    workoutNowBtn.addEventListener('click', this._recordWorkoutNow.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -146,10 +154,11 @@ class App {
     this.myCoords = [latitude, longitude];
 
     //show my current position area
-    this.#map = L.map('map', { minZoom: 4, doubleClickZoom: false }).setView(
-      this.myCoords,
-      this.#mapZoomLevel
-    );
+    this.#map = L.map('map', {
+      minZoom: 4,
+      doubleClickZoom: false,
+      touchExtend: true,
+    }).setView(this.myCoords, this.#mapZoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution:
@@ -179,7 +188,9 @@ class App {
     this.defaultColor();
     //hide the weather window
     this.clsWthrMdlWndw();
+    //display saveing button
     saveWorkoutBtn.classList.remove('hidden');
+    //hide edit/delete buttons, if necessary
     if (this.currentTargetBtns) this._hideBtns();
     this.#mapEvent = mapE;
     this.pathwayCoords.push([
@@ -455,14 +466,7 @@ class App {
         workoutEl.style.backgroundColor = '#5d666e';
         //scroll animation
         workoutEl.scrollIntoView({ behavior: 'smooth' });
-
-        setTimeout(
-          function () {
-            sidebar.style.visibility = 'hidden';
-            sidebar.style.opacity = 0;
-          }.bind(this),
-          300
-        );
+        this._hideSidebarSoon();
       } else {
         //return all workouts their original color
         this.defaultColor();
@@ -508,6 +512,19 @@ class App {
   }
 
   ///////////////////// MY UPDATES /////////////////////////
+
+  _recordWorkoutNow() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          console.log(position.coords);
+        },
+        function () {
+          alert(`We couldn't get your current position`);
+        }
+      );
+    }
+  }
 
   // Display "Delete" and "Edit" btns
   _displayBtns() {
@@ -850,6 +867,16 @@ class App {
     }
   }
 
+  _hideSidebarSoon() {
+    setTimeout(
+      function () {
+        sidebar.style.visibility = 'hidden';
+        sidebar.style.opacity = 0;
+      }.bind(this),
+      300
+    );
+  }
+
   _toggleWindow() {
     if (sidebar.style.visibility === 'hidden') {
       sidebar.style.visibility = 'visible';
@@ -897,6 +924,8 @@ class App {
       showAllBtn.textContent = 'Show All';
       this.shownAll = false;
     }
+
+    this._hideSidebarSoon();
   }
 
   //Remove all workouts from the Sidebar
@@ -1218,3 +1247,11 @@ class App {
 
 //Run the App written above
 const app = new App();
+
+// Object.keys(window).forEach(key => {
+//   if (/^on/.test(key)) {
+//     window.addEventListener(key.slice(2), event => {
+//       console.log(event);
+//     });
+//   }
+// });
