@@ -512,7 +512,7 @@ class App {
   shwMdlWndwFn() {
     modalWindowConfirm.classList.remove('hidden');
     modalWindowConfirm.style.display = 'grid';
-    modalWindowConfirm.style.zIndex = '500';
+    modalWindowConfirm.style.zIndex = '750';
     overlay.classList.remove('hidden');
   }
 
@@ -527,7 +527,7 @@ class App {
   // Display ErrorModalWindow
   showErrorWindow() {
     errorWindow.classList.remove('hidden');
-    errorWindow.style.zIndex = '500';
+    errorWindow.style.zIndex = '750';
     errorWindow.style.display = 'grid';
     overlay.classList.remove('hidden');
 
@@ -1110,7 +1110,7 @@ class App {
 
   //Show the drawing window
   shwDrwngWndw() {
-    drawWindow.style.display = 'grid';
+    drawWindow.style.display = 'flex';
     drawWindow.style.zIndex = '500';
   }
 
