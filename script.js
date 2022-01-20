@@ -37,7 +37,7 @@ const weatherWind = document.querySelector('.weather__wind');
 const weatherCond = document.querySelector('.weather__cond');
 const weatherData = document.querySelectorAll('.weather__data');
 const toggleBtn = document.querySelector('.toggle-button');
-console.log(toggleBtn);
+const sidebar = document.querySelector('.sidebar');
 ///----------------------------------------------------///
 
 class Workout {
@@ -122,7 +122,7 @@ class App {
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
-    // window.addEventListener('resize', this._toggleSidebarJS.bind(this));
+    window.addEventListener('load', this._checkWidth.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -435,30 +435,49 @@ class App {
     this._clearForm();
     this.clsEdtWndwFn(e);
 
-    //return all workouts their original color
-    this.defaultColor();
     //---------------------------------///
     const workoutEl = e.target.closest(`.workout`);
     if (!workoutEl) return;
 
-    //color the targeted workout
-    workoutEl.style.backgroundColor = '#5d666e';
-
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-    // prettier-ignore
-    this.#map.setView(workout.coords, this.#mapZoomLevel, {
-      animate: true,
-      pan: {duration: 0.75,},
-    });
-
-    //My Updates ///-/// display or hide 'Edit' and 'Delete' buttons
-    workoutEl.scrollIntoView({ behavior: 'smooth' });
+    console.log(this.currentTarget, workout.id);
     if (this.currentTarget === workout.id) {
       this._displayBtns();
-    } else if (this.currentTarget && this.currentTarget !== workout.id) {
+    } else if (!this.currentTarget || this.currentTarget !== workout.id) {
+      // hide sidebar, if necessary
+      if (window.innerWidth <= 799) {
+        //return all workouts their original color
+        this.defaultColor();
+        //color the targeted workout preview
+        workoutEl.style.backgroundColor = '#5d666e';
+        //scroll animation
+        workoutEl.scrollIntoView({ behavior: 'smooth' });
+
+        setTimeout(
+          function () {
+            sidebar.style.visibility = 'hidden';
+            sidebar.style.opacity = 0;
+          }.bind(this),
+          300
+        );
+      } else {
+        //return all workouts their original color
+        this.defaultColor();
+        //color the targeted workout preview
+        workoutEl.style.backgroundColor = '#5d666e';
+        //scroll animation
+        workoutEl.scrollIntoView({ behavior: 'smooth' });
+      }
+
       this._hideBtns();
+
+      //find the place in the map
+      this.#map.setView(workout.coords, this.#mapZoomLevel, {
+        animate: true,
+        pan: { duration: 0.75 },
+      });
     }
     // display the weather conditions
     this._workoutWeather(workout);
@@ -466,6 +485,7 @@ class App {
 
     // store info about the clicked workout
     this.currentTarget = workout.id;
+
     ///-------------------------------///
   }
 
@@ -819,26 +839,24 @@ class App {
 
   ///////  Supporting Functions  ///////
 
-  _toggleWindow() {
-    console.log(document.querySelector('.sidebar').style.display);
-    if (document.querySelector('.sidebar').style.display === 'none') {
-      document.querySelector('.sidebar').style.display = 'flex';
-    } else document.querySelector('.sidebar').style.display = 'none';
+  _checkWidth() {
+    if (window.innerWidth <= 640) {
+      sidebar.style.visibility = 'hidden';
+      sidebar.style.opacity = 0;
+    } else {
+      sidebar.style.visibility = 'visible';
+      sidebar.style.opacity = 1;
+    }
   }
 
-  _toggleSidebarJS() {
-    if (
-      (+window.innerWidth >= 641 &&
-        document.querySelector('.sidebar').style.display === 'none') ||
-      document.querySelector('.sidebar').style.display === ''
-    ) {
-      document.querySelector('.sidebar').style.display = 'flex';
-    } else if (
-      (+window.innerWidth <= 640 &&
-        document.querySelector('.sidebar').style.display === 'flex') ||
-      document.querySelector('.sidebar').style.display === ''
-    )
-      document.querySelector('.sidebar').style.display = 'none';
+  _toggleWindow() {
+    if (sidebar.style.visibility === 'hidden') {
+      sidebar.style.visibility = 'visible';
+      sidebar.style.opacity = 1;
+    } else {
+      sidebar.style.visibility = 'hidden';
+      sidebar.style.opacity = 0;
+    }
   }
 
   displayButtons() {
