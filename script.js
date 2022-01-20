@@ -122,6 +122,7 @@ class App {
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
+    // window.addEventListener('resize', this._toggleSidebarJS.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -480,7 +481,6 @@ class App {
 
     //store and render workouts (in the sidebar)
     this.#workouts = data;
-    console.log(data);
     this.#workouts.forEach(wk => {
       this._renderWorkout(wk);
     });
@@ -820,11 +820,25 @@ class App {
   ///////  Supporting Functions  ///////
 
   _toggleWindow() {
-    console.log('Button Works');
-    document.querySelector('.dropdown').classList.toggle('hidden');
-    console.log(document.querySelector('.dropdown'));
-    document.querySelector('.workouts').classList.toggle('hidden');
-    console.log(document.querySelector('.workouts'));
+    console.log(document.querySelector('.sidebar').style.display);
+    if (document.querySelector('.sidebar').style.display === 'none') {
+      document.querySelector('.sidebar').style.display = 'flex';
+    } else document.querySelector('.sidebar').style.display = 'none';
+  }
+
+  _toggleSidebarJS() {
+    if (
+      (+window.innerWidth >= 641 &&
+        document.querySelector('.sidebar').style.display === 'none') ||
+      document.querySelector('.sidebar').style.display === ''
+    ) {
+      document.querySelector('.sidebar').style.display = 'flex';
+    } else if (
+      (+window.innerWidth <= 640 &&
+        document.querySelector('.sidebar').style.display === 'flex') ||
+      document.querySelector('.sidebar').style.display === ''
+    )
+      document.querySelector('.sidebar').style.display = 'none';
   }
 
   displayButtons() {
