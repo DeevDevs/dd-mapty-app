@@ -30,6 +30,7 @@ const errorOkBtn = document.querySelector('.modal__btn__ok');
 const sortBtn = document.querySelector('.dropbtn');
 const deleteAllBtn = document.querySelector('.delete_all');
 const showAllBtn = document.querySelector('.show_all');
+const saveWorkoutBtn = document.querySelector('.save_workout');
 const weatherDesc = document.querySelector('.weather__desc');
 const weatherModal = document.querySelector('.weather__window');
 const weatherTemp = document.querySelector('.weather__temp');
@@ -178,7 +179,7 @@ class App {
     this.defaultColor();
     //hide the weather window
     this.clsWthrMdlWndw();
-
+    saveWorkoutBtn.classList.remove('hidden');
     if (this.currentTargetBtns) this._hideBtns();
     this.#mapEvent = mapE;
     this.pathwayCoords.push([
@@ -943,6 +944,7 @@ class App {
     //close all unnecessary forms
     form.classList.add('hidden');
     this._hideBtns();
+    this.clsDrwngWndw();
     this.clsMdlWndwFn();
     if (workoutList.querySelector('.form__edit')) {
       this.editFormRemove();

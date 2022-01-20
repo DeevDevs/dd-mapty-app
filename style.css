@@ -52,8 +52,9 @@ a:visited {
   justify-content: flex-end;
   width: 47rem;
   background-color: var(--color-dark--1);
-  z-index: 700;
+  z-index: 690;
   vertical-align: middle;
+  transition: all 0.7s ease;
 }
 
 .image-block {
@@ -100,7 +101,7 @@ a:visited {
   max-height: calc(100vh - 5rem - 11.2rem);
   width: 47rem;
   /* min-width: 47rem; */
-  z-index: 700;
+  z-index: 690;
   flex-basis: 50rem;
   background-color: var(--color-dark--1);
   padding: 1rem 4rem 4rem 4rem;
@@ -108,8 +109,7 @@ a:visited {
   flex-direction: column;
   visibility: visible;
   opacity: 1;
-  transition: all 0.8s ease;
-  /* transition: opacity 1s ease; */
+  transition: all 0.7s ease;
 }
 
 .workouts {
@@ -243,12 +243,11 @@ a:visited {
 }
 
 .blockeverything {
-  /* transform: translate(-50%, -50%); */
   position: absolute;
-  height: 97%;
-  width: 98%;
-  /* backdrop-filter: blur(3px); */
-  z-index: 2;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(1px);
+  z-index: 700;
 }
 
 .modal__btns {
@@ -378,8 +377,16 @@ a:visited {
   /* transition: all 0.2s; */
 }
 
+.save_workout {
+  background-color: rgb(197, 78, 78);
+}
+
 .btn__style:hover {
   background-color: var(--color-light--2);
+}
+
+.save_workout:hover {
+  background: linear-gradient(to left top #ffb545, #00c46a);
 }
 
 .btn__style:active {
