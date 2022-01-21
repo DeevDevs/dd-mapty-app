@@ -23,7 +23,7 @@ const drawWindow = document.querySelector('.drawing_panel');
 const confirmPhrase = document.querySelector('.confirm_content');
 const drawInstructions = document.querySelector('.instructions');
 const drawCancelBtn = document.querySelector('.btn_cancel_draw');
-const drawEraseBtn = document.querySelector('.btn_erase_draw');
+// const drawEraseBtn = document.querySelector('.btn_erase_draw');
 const modalDeleteBtn = document.querySelector('.modal__btn__delete');
 const modalCancelBtn = document.querySelector('.modal__btn__cancel');
 const errorOkBtn = document.querySelector('.modal__btn__ok');
@@ -31,7 +31,7 @@ const sortBtn = document.querySelector('.dropbtn');
 const deleteAllBtn = document.querySelector('.delete_all');
 const showAllBtn = document.querySelector('.show_all');
 const saveWorkoutBtn = document.querySelector('.save_workout');
-const workoutNowBtn = document.querySelector('.work__now');
+// const workoutNowBtn = document.querySelector('.work__now');
 const weatherDesc = document.querySelector('.weather__desc');
 const weatherModal = document.querySelector('.weather__window');
 const weatherTemp = document.querySelector('.weather__temp');
@@ -124,14 +124,14 @@ class App {
     modalWindowConfirm.addEventListener('click', this.cancelOrDlt.bind(this)); // get ConfirmationModalWindow
     sortBtn.addEventListener('click', this.openTypeMenu.bind(this)); // activate dropDown menu for sorting
     deleteAllBtn.addEventListener('click', this._deleteAllWorkouts.bind(this)); // delete all workouts
-    drawEraseBtn.addEventListener('click', this._eraseDrawing.bind(this)); // erase the path drawn by the user
+    // drawEraseBtn.addEventListener('click', this._eraseDrawing.bind(this)); // erase the path drawn by the user
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
     //check width to set the display of sidebar
     window.addEventListener('load', this._checkWidth.bind(this));
     //save workout if smartphone
-    workoutNowBtn.addEventListener('click', this._recordWorkoutNow.bind(this));
+    // workoutNowBtn.addEventListener('click', this._recordWorkoutNow.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -166,7 +166,7 @@ class App {
     }).addTo(this.#map);
 
     //add the dblclick listener to the Map
-    this.#map.on('dblclick', this._showForm.bind(this));
+    this.#map.on('click', this._showForm.bind(this));
 
     //render workouts from the local storage (on the map)
     this.#workouts.forEach(wk => {
@@ -188,8 +188,9 @@ class App {
     this.defaultColor();
     //hide the weather window
     this.clsWthrMdlWndw();
-    //display saveing button
+    //display save and cancel buttons
     saveWorkoutBtn.classList.remove('hidden');
+    drawCancelBtn.classList.remove('hidden');
     //hide edit/delete buttons, if necessary
     if (this.currentTargetBtns) this._hideBtns();
     this.#mapEvent = mapE;
@@ -221,11 +222,11 @@ class App {
     if (this.pathwayCoords) this.pathwayCoords = [];
     //check if the DrawingModalWindow is open
     this.clsDrwngWndw();
-    //hide buttons
-    if (!drawEraseBtn.classList.contains('hidden')) {
-      drawEraseBtn.classList.add('hidden');
-      drawCancelBtn.classList.add('hidden');
-    }
+    // //hide buttons
+    // if (!drawEraseBtn.classList.contains('hidden')) {
+    //   drawEraseBtn.classList.add('hidden');
+    //   drawCancelBtn.classList.add('hidden');
+    // }
     /// ------------------------------------ ///
   }
 
@@ -256,7 +257,7 @@ class App {
         lat = this.#mapEvent.latlng.lat;
         lng = this.#mapEvent.latlng.lng;
       }
-      if (this.pathwayWorkout) {
+      if (this.pathwayCoords.length >= 2) {
         lat = this.pathwayWorkout.getCenter().lat;
         lng = this.pathwayWorkout.getCenter().lng;
       }
@@ -320,6 +321,7 @@ class App {
 
   // Add markers to the map
   _renderWorkoutMarker(workout) {
+    console.log(workout);
     //save it into markers array
     this.#allMarkers.push(
       L.marker(workout.coords)
@@ -513,18 +515,18 @@ class App {
 
   ///////////////////// MY UPDATES /////////////////////////
 
-  _recordWorkoutNow() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          console.log(position.coords);
-        },
-        function () {
-          alert(`We couldn't get your current position`);
-        }
-      );
-    }
-  }
+  // _recordWorkoutNow() {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       function (position) {
+  //         console.log(position.coords);
+  //       },
+  //       function () {
+  //         alert(`We couldn't get your current position`);
+  //       }
+  //     );
+  //   }
+  // }
 
   // Display "Delete" and "Edit" btns
   _displayBtns() {
@@ -1056,15 +1058,11 @@ class App {
     this.shwDrwngWndw();
     //supporting function - draw the line after each extra click
     const gainCoords = function (mapEv) {
-      //display additional btns
-      if (drawEraseBtn.classList.contains('hidden')) {
-        drawEraseBtn.classList.remove('hidden');
-        drawCancelBtn.classList.remove('hidden');
-      }
       //get the click coordinates
       const { lat, lng } = mapEv.latlng;
       //save the new coords
       this.pathwayCoords.push([lat, lng]);
+      console.log(this.pathwayCoords);
       if (this.pathwayWorkout) {
         this.pathwayWorkout.remove();
       }
@@ -1072,13 +1070,17 @@ class App {
       this.pathwayWorkout = L.polyline(this.pathwayCoords, {
         color: 'red',
         smoothfactor: 5,
-        weight: 12,
+        weight: 8,
         lineJoin: 'round',
         lineCap: 'round',
       }).addTo(this.#map);
 
       //count distance between point to measure the total distance
       if (this.pathwayCoords.length >= 2) {
+        // console.log(
+        //   this.pathwayCoords[this.pathwayCoords.length - 1],
+        //   this.pathwayCoords[this.pathwayCoords.length - 2]
+        // );
         const addDistance =
           this.#map.distance(
             this.pathwayCoords[this.pathwayCoords.length - 1],
@@ -1093,28 +1095,21 @@ class App {
     //start drawing the Path (add listener)
     this.#map.on('click', gainCoords);
 
-    //add listeners to the Cancel button and to the document
-    drawCancelBtn.addEventListener(
-      'click',
-      function () {
-        this._cancelDrawing();
-        //remove listener, if the user cancels drawing
-        this.#map.off('click', gainCoords);
-      }.bind(this)
-    );
-
     document.addEventListener(
       'click',
       function (e) {
         if (
           e.target.closest('.workout') ||
-          e.target === containerWorkouts ||
-          e.target.closest('.dropdown')
+          e.target.closest('.workouts') ||
+          e.target.closest('.dropdown') ||
+          e.target.closest('.btn_cancel_draw') ||
+          e.target.closest('.save_workout')
         ) {
           this._cancelDrawing();
           this.#map.off('click', gainCoords);
         }
-      }.bind(this)
+      }.bind(this),
+      { once: true }
     );
 
     document.addEventListener(
@@ -1126,35 +1121,36 @@ class App {
         }
         if (e.key === 'Enter') {
           this.#map.off('click', gainCoords);
+          setTimeout(
+            function () {
+              this._setDefaultDrawingParameters();
+            }.bind(this),
+            500
+          );
         }
-      }.bind(this)
+      }.bind(this),
+      { once: true }
     );
   }
 
-  // Cancel drawing
+  // Cancel workout
   _cancelDrawing() {
     //clear and close the form
     if (!form.classList.contains('hidden')) {
       this._clearForm();
     }
-    //erase the path, if it is there
-    this._eraseDrawing();
-    this.pathDistance = 0;
-    //hide buttons
-    if (!drawEraseBtn.classList.contains('hidden')) {
-      drawEraseBtn.classList.add('hidden');
-      drawCancelBtn.classList.add('hidden');
-    }
+    this._setDefaultDrawingParameters();
   }
 
-  // Erase the current path
-  _eraseDrawing() {
+  _setDefaultDrawingParameters() {
     if (this.pathwayWorkout) {
       this.pathwayWorkout.remove();
     }
-    //empty the pathway coords array
+    //empty the pathway coords array and set default values
     this.pathwayCoords = [];
     this.pathwayWorkout = false;
+    this.pathDistance = 0;
+    console.log('params set');
   }
 
   //Show the drawing window

@@ -104,7 +104,7 @@ a:visited {
   z-index: 690;
   flex-basis: 50rem;
   background-color: var(--color-dark--1);
-  padding: 1rem 4rem 4rem 4rem;
+  padding: 1rem 4rem 2.5rem 4rem;
   display: flex;
   flex-direction: column;
   visibility: visible;
@@ -297,6 +297,7 @@ a:visited {
 }
 
 .dropdown {
+  position: relative;
   display: flex;
   width: 100%;
   align-items: center;
@@ -305,15 +306,9 @@ a:visited {
   margin-top: 2rem;
 }
 
-.dropbtn {
-  height: 100%;
-  width: 100%;
-  margin-right: 1rem;
-}
-
-.btn__sort {
+/* .btn__sort {
   font-size: inherit;
-}
+} */
 
 .dropdown-content {
   font-size: 1.5rem;
@@ -322,7 +317,7 @@ a:visited {
   align-items: center;
   justify-content: center;
   position: absolute;
-  left: 34rem;
+  right: 3rem;
   background-color: var(--color-light--3);
   min-width: 3rem;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -370,10 +365,10 @@ a:visited {
   border: 1px solid black;
   border-radius: 0.5rem;
   cursor: pointer;
-  padding: 1rem;
+  padding: 0.6rem;
   margin-right: 1rem;
   font-weight: 600;
-  box-shadow: -5px 0 3px #2f3832;
+  box-shadow: -3px 0 3px #2f3832;
   /* transition: all 0.2s; */
 }
 
@@ -390,8 +385,8 @@ a:visited {
   border: 1px solid black;
   border-radius: 0.5rem;
   cursor: pointer;
-  padding: 1rem;
-  margin-right: 1rem;
+  padding: 0.4rem;
+  /* margin-right: 0.8rem; */
   font-weight: 600;
   box-shadow: -5px 0 3px #2f3832;
 }
@@ -506,6 +501,7 @@ a:visited {
 }
 
 .copyright {
+  padding-top: 1rem;
   margin-top: auto;
   font-size: 1.3rem;
   text-align: center;
@@ -566,7 +562,7 @@ a:visited {
   }
 
   .sidebar {
-    padding: 1rem 2rem 3rem 2rem;
+    padding: 1rem 2rem 2rem 2rem;
     width: 80vw;
     height: calc(100vh - 8.4rem);
     max-height: calc(100vh - 8.4rem);
@@ -629,7 +625,7 @@ a:visited {
   }
 
   .dropdown-content {
-    left: 24.5rem;
+    right: 3.5rem;
   }
 
   @media (max-width: 28rem) {
@@ -695,8 +691,7 @@ a:visited {
     font-size: 1.4rem;
   }
 
-  .btn__style,
-  .save_workout {
+  .btn__style {
     font-size: 1.35rem;
     padding: 0.5rem;
     margin-right: 0.3rem;
@@ -719,7 +714,7 @@ a:visited {
   }
 
   .dropdown-content {
-    left: 24.5rem;
+    right: 6rem;
   }
 
   @media (max-width: 50rem) {
