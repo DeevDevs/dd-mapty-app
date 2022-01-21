@@ -379,20 +379,20 @@ a:visited {
 .save_workout {
   width: fit-content;
   height: fit-content;
-  background-color: rgb(197, 78, 78);
+  background-image: linear-gradient(to top left, #ffb545, #00c46a);
   color: #2d3439;
   font-size: 1.7rem;
   border: 1px solid black;
   border-radius: 0.5rem;
   cursor: pointer;
-  padding: 0.4rem;
+  padding: 0.6rem;
   /* margin-right: 0.8rem; */
   font-weight: 600;
-  box-shadow: -5px 0 3px #2f3832;
+  box-shadow: -3px 0 3px #2f3832;
 }
 
 .save_workout:hover {
-  background-image: linear-gradient(to top left, #ffb545, #00c46a);
+  background-image: linear-gradient(to top left, #00c46a, #ffb545);
 }
 
 .work__now {
@@ -691,7 +691,8 @@ a:visited {
     font-size: 1.4rem;
   }
 
-  .btn__style {
+  .btn__style,
+  .save_workout {
     font-size: 1.35rem;
     padding: 0.5rem;
     margin-right: 0.3rem;

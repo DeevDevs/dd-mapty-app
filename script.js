@@ -27,11 +27,11 @@ const drawCancelBtn = document.querySelector('.btn_cancel_draw');
 const modalDeleteBtn = document.querySelector('.modal__btn__delete');
 const modalCancelBtn = document.querySelector('.modal__btn__cancel');
 const errorOkBtn = document.querySelector('.modal__btn__ok');
+const errorMsgBox = document.querySelector('.error_content');
 const sortBtn = document.querySelector('.dropbtn');
 const deleteAllBtn = document.querySelector('.delete_all');
 const showAllBtn = document.querySelector('.show_all');
 const saveWorkoutBtn = document.querySelector('.save_workout');
-// const workoutNowBtn = document.querySelector('.work__now');
 const weatherDesc = document.querySelector('.weather__desc');
 const weatherModal = document.querySelector('.weather__window');
 const weatherTemp = document.querySelector('.weather__temp');
@@ -109,11 +109,12 @@ class App {
     this._getPosition();
     //Retrieve data from the Local Storage
     this._getLocalStorage();
-    //Add Event Listeners
+    //Adding Event Listeners
+    this._listenersCancelDrawing();
+    this._listenersErrorBtn();
+
     form.addEventListener('submit', this._newWorkout.bind(this)); // make the form submission create a new workout
-
     saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this)); // make the form submission create a new workout
-
     inputType.addEventListener('change', this._toggleElevationField); // switch the workout type
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this)); // move to the PopUp once I click on the workout
 
@@ -124,14 +125,14 @@ class App {
     modalWindowConfirm.addEventListener('click', this.cancelOrDlt.bind(this)); // get ConfirmationModalWindow
     sortBtn.addEventListener('click', this.openTypeMenu.bind(this)); // activate dropDown menu for sorting
     deleteAllBtn.addEventListener('click', this._deleteAllWorkouts.bind(this)); // delete all workouts
-    // drawEraseBtn.addEventListener('click', this._eraseDrawing.bind(this)); // erase the path drawn by the user
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
     //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
     //check width to set the display of sidebar
     window.addEventListener('load', this._checkWidth.bind(this));
-    //save workout if smartphone
-    // workoutNowBtn.addEventListener('click', this._recordWorkoutNow.bind(this));
+    //listeners to cancel path drawing
+    drawCancelBtn.addEventListener('click', this._cancelDrawing.bind(this));
+
     /// ------------------------------------ ///
   }
 
@@ -165,8 +166,15 @@ class App {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
 
-    //add the dblclick listener to the Map
-    this.#map.on('click', this._showForm.bind(this));
+    //add the click listener to the Map
+    // this.#map.on('click', this._showForm.bind(this));
+    //add the click listener to the Map
+    this.#map.on(
+      'click',
+      function (e) {
+        if (form.classList.contains('hidden')) this._showForm(e);
+      }.bind(this)
+    );
 
     //render workouts from the local storage (on the map)
     this.#workouts.forEach(wk => {
@@ -212,8 +220,22 @@ class App {
 
   //Clear & hide the form and the DrawingModalWindow
   _clearForm() {
-    // prettier-ignore
-    inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = '';
+    //Remove all custom listeners
+    this.#map.off();
+    //Reassign 'add workout' Listener
+    this.#map.on(
+      'click',
+      function (e) {
+        if (form.classList.contains('hidden')) this._showForm(e);
+      }.bind(this)
+    );
+    //remove workout records
+    this.pathDistance = 0;
+    inputDistance.value =
+      inputCadence.value =
+      inputDuration.value =
+      inputElevation.value =
+        '';
     form.style.display = 'none';
     form.classList.add('hidden');
     setTimeout(() => (form.style.display = 'grid'), 10);
@@ -272,7 +294,7 @@ class App {
           !this.validInput(distance, duration, cadence) ||
           !this.allPositive(distance, duration, cadence)
         )
-          return this.showErrorWindow(); // display ErrorModalWindow, if data is irrelevant
+          return this.showErrorWindow('Please, enter positive numbers only.'); // display ErrorModalWindow, if data is irrelevant
 
         workout = new Running([lat, lng], distance, duration, cadence);
       }
@@ -283,7 +305,7 @@ class App {
           !this.validInput(distance, duration, elevation) ||
           !this.allPositive(distance, duration)
         )
-          return this.showErrorWindow();
+          return this.showErrorWindow('Please, enter positive numbers only.');
 
         workout = new Cycling([lat, lng], distance, duration, elevation);
       }
@@ -314,14 +336,15 @@ class App {
       // this._workoutWeather(workout);
       //save all workouts in the local storage
       this._setLocalStorage();
+      //set default drawing parameters
+      this._setDefaultDrawingParameters();
     } catch (err) {
-      console.log(err);
+      this.showErrorWindow(err.message);
     }
   }
 
   // Add markers to the map
   _renderWorkoutMarker(workout) {
-    console.log(workout);
     //save it into markers array
     this.#allMarkers.push(
       L.marker(workout.coords)
@@ -456,7 +479,6 @@ class App {
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-    console.log(this.currentTarget, workout.id);
     if (this.currentTarget === workout.id) {
       this._displayBtns();
     } else if (!this.currentTarget || this.currentTarget !== workout.id) {
@@ -515,19 +537,6 @@ class App {
 
   ///////////////////// MY UPDATES /////////////////////////
 
-  // _recordWorkoutNow() {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       function (position) {
-  //         console.log(position.coords);
-  //       },
-  //       function () {
-  //         alert(`We couldn't get your current position`);
-  //       }
-  //     );
-  //   }
-  // }
-
   // Display "Delete" and "Edit" btns
   _displayBtns() {
     this.currentTargetBtns = document
@@ -565,7 +574,8 @@ class App {
   }
 
   // Display ErrorModalWindow
-  showErrorWindow() {
+  showErrorWindow(message) {
+    errorMsgBox.textContent = message;
     errorWindow.classList.remove('hidden');
     errorWindow.style.zIndex = '750';
     errorWindow.style.display = 'grid';
@@ -573,7 +583,9 @@ class App {
 
     //remove focus
     document.activeElement.blur();
+  }
 
+  _listenersErrorBtn() {
     //add listeners to close the window
     errorOkBtn.addEventListener('click', function () {
       errorWindow.style.zIndex = '1';
@@ -714,7 +726,7 @@ class App {
             !this.validInput(newDistance, newDuration, newElevation) ||
             !this.allPositive(newDistance, newDuration, newElevation)
           )
-            return this.showErrorWindow();
+            return this.showErrorWindow('Please, enter positive numbers only.');
 
           workoutObj.elevation = newElevation;
           if (workoutObj.cadence) delete workoutObj.cadence;
@@ -729,7 +741,7 @@ class App {
             !this.validInput(newDistance, newDuration, newCadence) ||
             !this.allPositive(newDistance, newDuration, newCadence)
           )
-            return this.showErrorWindow();
+            return this.showErrorWindow('Please, enter positive numbers only.');
 
           workoutObj.cadence = newCadence;
           if (workoutObj.elevation) delete workoutObj.elevation;
@@ -1052,84 +1064,75 @@ class App {
 
   ///////  Functions for Drawing Workout Paths  ///////
 
-  // Draw a path on the map
+  //function that draws the path
+  _gainCoords(mapEv) {
+    //get the click coordinates
+    const { lat, lng } = mapEv.latlng;
+    //save the new coords
+    this.pathwayCoords.push([lat, lng]);
+    if (this.pathwayWorkout) {
+      this.pathwayWorkout.remove();
+    }
+    //display the line (update the polyline after every click)
+    this.pathwayWorkout = L.polyline(this.pathwayCoords, {
+      color: 'red',
+      smoothfactor: 5,
+      weight: 8,
+      lineJoin: 'round',
+      lineCap: 'round',
+    }).addTo(this.#map);
+
+    //count distance between point to measure the total distance
+    if (this.pathwayCoords.length >= 2) {
+      const addDistance =
+        this.#map.distance(
+          this.pathwayCoords[this.pathwayCoords.length - 1],
+          this.pathwayCoords[this.pathwayCoords.length - 2]
+        ) / 1000;
+      this.pathDistance += addDistance;
+      //display it in the new workout form
+      inputDistance.value = +this.pathDistance.toFixed(1);
+    }
+  }
+
+  // Activate drawing a path on the map
   _drawPath() {
     //show the DrawingModalWindow
     this.shwDrwngWndw();
-    //supporting function - draw the line after each extra click
-    const gainCoords = function (mapEv) {
-      //get the click coordinates
-      const { lat, lng } = mapEv.latlng;
-      //save the new coords
-      this.pathwayCoords.push([lat, lng]);
-      console.log(this.pathwayCoords);
-      if (this.pathwayWorkout) {
-        this.pathwayWorkout.remove();
-      }
-      //display the line (update the polyline after every click)
-      this.pathwayWorkout = L.polyline(this.pathwayCoords, {
-        color: 'red',
-        smoothfactor: 5,
-        weight: 8,
-        lineJoin: 'round',
-        lineCap: 'round',
-      }).addTo(this.#map);
-
-      //count distance between point to measure the total distance
-      if (this.pathwayCoords.length >= 2) {
-        // console.log(
-        //   this.pathwayCoords[this.pathwayCoords.length - 1],
-        //   this.pathwayCoords[this.pathwayCoords.length - 2]
-        // );
-        const addDistance =
-          this.#map.distance(
-            this.pathwayCoords[this.pathwayCoords.length - 1],
-            this.pathwayCoords[this.pathwayCoords.length - 2]
-          ) / 1000;
-        this.pathDistance += addDistance;
-        //display it in the new workout form
-        inputDistance.value = +this.pathDistance.toFixed(1);
-      }
-    }.bind(this);
-
     //start drawing the Path (add listener)
-    this.#map.on('click', gainCoords);
+    this.#map.on('click', this._gainCoords.bind(this));
+  }
 
+  _listenersCancelDrawing() {
+    //adding cancelling listeners
     document.addEventListener(
       'click',
       function (e) {
         if (
-          e.target.closest('.workout') ||
-          e.target.closest('.workouts') ||
-          e.target.closest('.dropdown') ||
-          e.target.closest('.btn_cancel_draw') ||
-          e.target.closest('.save_workout')
+          (!form.classList.contains('hidden') &&
+            e.target.closest('.workout')) ||
+          e.target.closest('.dropdown')
         ) {
           this._cancelDrawing();
-          this.#map.off('click', gainCoords);
         }
-      }.bind(this),
-      { once: true }
+      }.bind(this)
     );
-
+    //and buttons
     document.addEventListener(
       'keydown',
       function (e) {
         if (e.key === 'Escape') {
           this._cancelDrawing();
-          this.#map.off('click', gainCoords);
         }
         if (e.key === 'Enter') {
-          this.#map.off('click', gainCoords);
           setTimeout(
             function () {
               this._setDefaultDrawingParameters();
             }.bind(this),
-            500
+            1000
           );
         }
-      }.bind(this),
-      { once: true }
+      }.bind(this)
     );
   }
 
@@ -1150,7 +1153,6 @@ class App {
     this.pathwayCoords = [];
     this.pathwayWorkout = false;
     this.pathDistance = 0;
-    console.log('params set');
   }
 
   //Show the drawing window
@@ -1182,7 +1184,6 @@ class App {
       //render the workout in the weatherModalWindow
       this._workoutWeather(wk);
     } catch (err) {
-      console.log(err);
       weatherDesc.textContent = `Couldn't collect weather data. Please, check your internet conection.`;
       this.shwWthrMdlWndw();
       setTimeout(
@@ -1201,7 +1202,7 @@ class App {
     weatherData.forEach(param => param.classList.remove('hidden'));
   }
 
-  // Close weatherModalW  indow
+  // Close weatherModal Window
   clsWthrMdlWndw() {
     if (weatherModal.classList.contains('hidden')) return;
     weatherModal.classList.add('hidden');
