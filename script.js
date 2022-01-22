@@ -44,6 +44,11 @@ const toggleBtn = document.querySelector('.toggle-button');
 const sidebar = document.querySelector('.sidebar');
 let drawingProcess = false;
 let drawingFinished = false;
+let tempMapE;
+const strategyWindow = document.querySelector('.define__strategy');
+const btnModalDoDraw = document.querySelector('.strategy__btn--draw');
+const btnModalDoNotDraw = document.querySelector('.strategy__btn--notdraw');
+const btnModalCancel = document.querySelector('.strategy__btn--cancel');
 ///----------------------------------------------------///
 
 class Workout {
@@ -137,11 +142,17 @@ class App {
     window.addEventListener('load', this._checkWidth.bind(this));
     //listeners to cancel path drawing
     drawCancelBtn.addEventListener('click', this._cancelDrawing.bind(this));
-    drawCancelBtnExtra.addEventListener(
+    //prettier-ignore
+    drawCancelBtnExtra.addEventListener('click', this._cancelDrawing.bind(this));
+
+    btnModalDoDraw.addEventListener('click', this.agreedToDraw.bind(this));
+
+    btnModalDoNotDraw.addEventListener(
       'click',
-      this._cancelDrawing.bind(this)
+      this.disagreedToDraw.bind(this)
     );
 
+    btnModalCancel.addEventListener('click', this.cancelTheRecord.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -174,14 +185,19 @@ class App {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
-
-    //add the click listener to the Map
-    // this.#map.on('click', this._showForm.bind(this));
     //add the click listener to the Map
     this.#map.on(
       'click',
       function (e) {
-        if (form.classList.contains('hidden')) this._showForm(e);
+        if (form.classList.contains('hidden')) {
+          if (window.innerWidth < 641) {
+            tempMapE = e;
+            overlay.classList.remove('hidden');
+            strategyWindow.classList.remove('hidden');
+          } else {
+            this._showForm(e);
+          }
+        }
       }.bind(this)
     );
 
@@ -209,7 +225,6 @@ class App {
     if (window.innerWidth < 641 || window.innerHeight < 641) {
       saveWorkoutBtnExtra.classList.remove('hidden');
       drawCancelBtnExtra.classList.remove('hidden');
-      this._toggleWindow();
     }
     if (window.innerWidth > 641 && window.innerHeight > 641) {
       this.shwDrwngWndw();
@@ -446,11 +461,9 @@ class App {
             <span class="workout__value">${workout.cadence}</span>
             <span class="workout__unit">spm</span>
           </div>
-          <div class="workout__details_2 btn btn_delete hidden">
-            <span class="workout__icon btn btn_delete">Delete</span>
+          <div class="workout__details_2 btn btn_delete hidden">Delete
           </div>
-          <div class="workout__details_2 btn btn_edit hidden">
-            <span class="workout__icon btn btn_edit">Edit</span>
+          <div class="workout__details_2 btn btn_edit hidden">Edit
           </div>
           </li>`
         : ` <div class="workout__details">
@@ -1298,6 +1311,25 @@ class App {
   reset() {
     localStorage.removeItem('workouts');
     location.reload();
+  }
+
+  agreedToDraw() {
+    this._showForm(tempMapE);
+    strategyWindow.classList.add('hidden');
+    overlay.classList.add('hidden');
+  }
+
+  disagreedToDraw() {
+    this._toggleWindow();
+    this._showForm(tempMapE);
+    strategyWindow.classList.add('hidden');
+    overlay.classList.add('hidden');
+  }
+
+  cancelTheRecord() {
+    this._clearForm();
+    strategyWindow.classList.add('hidden');
+    overlay.classList.add('hidden');
   }
 }
 

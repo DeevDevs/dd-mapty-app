@@ -187,15 +187,14 @@ a:visited {
 .workout__details_2 {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: baseline;
+  text-align: center;
   justify-content: space-around;
   background-color: var(--color-light--1);
-  margin-bottom: 0.7rem;
   border: 1px solid black;
   border-radius: 0.5rem;
   color: #2d3439;
   font-weight: 600;
+  font-size: 2rem;
   box-shadow: -5px 0 3px #2f3832;
   transition: all 0.2s;
 }
@@ -219,28 +218,56 @@ a:visited {
   opacity: 0;
   border: none;
   display: none;
-  transition: all 0.5s, transform 100ms;
+  transition: all 0.3s, transform 100ms;
 }
 
 .window {
   position: absolute;
-  /* height: relative; */
-  /* width: relative; */
   top: 40%;
   left: 50%;
+  width: 24rem;
   background-color: var(--color-dark--2);
   transform: translate(-50%, -50%);
   border: 1px solid white;
   border-radius: 5px;
-  padding: 1.5rem 2.25rem;
-  margin-bottom: 1.75rem;
-  z-index: 1;
+  padding: 1.5rem 1.25rem;
+  z-index: 1000;
   font-size: 1.75rem;
-  display: none;
   grid-template-columns: 1fr;
-  gap: 3rem 1.5rem;
+  gap: 0 1.5rem;
   cursor: pointer;
   transition: all 0.2s;
+  line-height: 1.3;
+}
+
+.define__strategy {
+  font-size: 1.2rem;
+  color: #2d3439;
+  font-weight: 600;
+  background-image: linear-gradient(to top left, #ffb545, #00c46a);
+}
+
+.strategy__btns--container {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn__strategy {
+  width: fit-content;
+  height: fit-content;
+  background-color: var(--color-light--1);
+  color: #2d3439;
+  font-size: 1.1rem;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  padding: 0.6rem;
+  font-weight: 600;
+  box-shadow: -3px 0 3px #2f3832;
+  /* transition: all 0.2s; */
 }
 
 .confirm_content {
@@ -264,7 +291,7 @@ a:visited {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .instructions {
@@ -280,9 +307,14 @@ a:visited {
 }
 
 .modal__btns {
+  margin-top: 2rem;
   width: 100%;
   display: flex;
   justify-content: space-around;
+}
+
+.modal__btn__ok {
+  min-width: 6rem;
 }
 
 .form__edit {
@@ -529,6 +561,14 @@ a:visited {
   display: none;
 }
 
+.modal__btn__ok {
+  min-width: 6rem;
+}
+
+.error_content {
+  text-align: center;
+}
+
 .copyright {
   padding-top: 1rem;
   margin-top: auto;
@@ -564,7 +604,7 @@ a:visited {
 }
 
 .leaflet-popup .leaflet-popup-content {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .leaflet-popup .leaflet-popup-tip {
@@ -587,6 +627,15 @@ a:visited {
     display: none;
   }
 
+  .leaflet-popup .leaflet-popup-content-wrapper {
+    padding-right: 0.1rem;
+    width: 20rem;
+  }
+
+  .leaflet-popup .leaflet-popup-content {
+    font-size: 1.3rem;
+  }
+
   .image-block {
     display: flex;
     width: 100%;
@@ -603,6 +652,7 @@ a:visited {
     width: 14rem;
     height: 3rem;
     visibility: visible;
+    font-size: 1.3rem;
   }
 
   .toggle-button {
@@ -698,11 +748,8 @@ a:visited {
     gap: 0.75rem 0.5rem;
   }
 
-  .btn__style,
-  .save_workout {
-    font-size: 1.35rem;
-    padding: 0.5rem;
-    margin-right: 0.5rem;
+  .workout__details_2 {
+    font-size: 1.5rem;
   }
 
   .work__now {
@@ -716,8 +763,26 @@ a:visited {
     padding: 1rem 1rem;
   }
 
-  .dropdown-content {
+  .btn_edit,
+  .btn_delete {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  .btn_.dropdown-content {
     left: 21rem;
+  }
+
+  .btn__style,
+  .save_workout {
+    font-size: 1.35rem;
+    padding: 0.5rem;
+    margin-right: 0.3rem;
+  }
+
+  .blockeverything {
+    height: 100vh;
+    width: 100vw;
   }
 
   @media (max-width: 28rem) {
@@ -816,6 +881,15 @@ a:visited {
     display: none;
   }
 
+  .leaflet-popup .leaflet-popup-content-wrapper {
+    padding-right: 0.1rem;
+    width: 20rem;
+  }
+
+  .leaflet-popup .leaflet-popup-content {
+    font-size: 1.3rem;
+  }
+
   .weather__window {
     font-size: 1.1rem;
     width: 25rem;
@@ -869,8 +943,9 @@ a:visited {
   .dropdown-content {
     left: 21rem;
   }
+
+  .blockeverything {
+    height: 100vh;
+    width: 100vw;
+  }
 }
-
-/* @media (max-height: 40rem) and (max-width: 40rem){
-
-} */
