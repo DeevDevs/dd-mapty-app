@@ -23,6 +23,7 @@ const drawWindow = document.querySelector('.drawing_panel');
 const confirmPhrase = document.querySelector('.confirm_content');
 const drawInstructions = document.querySelector('.instructions');
 const drawCancelBtn = document.querySelector('.btn_cancel_draw');
+const drawCancelBtnExtra = document.querySelector('.btn_cancel_draw_extra');
 // const drawEraseBtn = document.querySelector('.btn_erase_draw');
 const modalDeleteBtn = document.querySelector('.modal__btn__delete');
 const modalCancelBtn = document.querySelector('.modal__btn__cancel');
@@ -32,6 +33,7 @@ const sortBtn = document.querySelector('.dropbtn');
 const deleteAllBtn = document.querySelector('.delete_all');
 const showAllBtn = document.querySelector('.show_all');
 const saveWorkoutBtn = document.querySelector('.save_workout');
+const saveWorkoutBtnExtra = document.querySelector('.save_workout-extra');
 const weatherDesc = document.querySelector('.weather__desc');
 const weatherModal = document.querySelector('.weather__window');
 const weatherTemp = document.querySelector('.weather__temp');
@@ -117,6 +119,7 @@ class App {
 
     form.addEventListener('submit', this._newWorkout.bind(this)); // make the form submission create a new workout
     saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this)); // make the form submission create a new workout
+    saveWorkoutBtnExtra.addEventListener('click', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField); // switch the workout type
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this)); // move to the PopUp once I click on the workout
 
@@ -134,6 +137,10 @@ class App {
     window.addEventListener('load', this._checkWidth.bind(this));
     //listeners to cancel path drawing
     drawCancelBtn.addEventListener('click', this._cancelDrawing.bind(this));
+    drawCancelBtnExtra.addEventListener(
+      'click',
+      this._cancelDrawing.bind(this)
+    );
 
     /// ------------------------------------ ///
   }
@@ -199,8 +206,16 @@ class App {
     //hide the weather window
     this.clsWthrMdlWndw();
     //display save and cancel buttons
-    saveWorkoutBtn.classList.remove('hidden');
-    drawCancelBtn.classList.remove('hidden');
+    if (window.innerWidth < 641 || window.innerHeight < 641) {
+      saveWorkoutBtnExtra.classList.remove('hidden');
+      drawCancelBtnExtra.classList.remove('hidden');
+      this._toggleWindow();
+    }
+    if (window.innerWidth > 641 && window.innerHeight > 641) {
+      this.shwDrwngWndw();
+    }
+
+    workoutList.scrollTo(0, 0);
     //hide edit/delete buttons, if necessary
     if (this.currentTargetBtns) this._hideBtns();
     this.#mapEvent = mapE;
@@ -229,6 +244,9 @@ class App {
       drawingFinished = false;
       drawingProcess = false;
     }
+    saveWorkoutBtnExtra.classList.add('hidden');
+    drawCancelBtnExtra.classList.add('hidden');
+
     //remove workout records
     this.pathDistance = 0;
     inputDistance.value =
@@ -244,11 +262,6 @@ class App {
     if (this.pathwayCoords) this.pathwayCoords = [];
     //check if the DrawingModalWindow is open
     this.clsDrwngWndw();
-    // //hide buttons
-    // if (!drawEraseBtn.classList.contains('hidden')) {
-    //   drawEraseBtn.classList.add('hidden');
-    //   drawCancelBtn.classList.add('hidden');
-    // }
     /// ------------------------------------ ///
   }
 
@@ -320,6 +333,8 @@ class App {
       this.#allCoords.push([lat, lng]);
       /// ------------------------------------ ///
 
+      if (window.innerWidth < 641 && sidebar.style.visibility === 'visible')
+        this._toggleWindow();
       //hide the Form and the PathDrawingModal + clear fields
       this._clearForm();
       //render the workout path, if nesessary
@@ -872,7 +887,7 @@ class App {
   ///////  Supporting Functions  ///////
 
   _checkWidth() {
-    if (window.innerWidth <= 640) {
+    if (window.innerWidth <= 641) {
       sidebar.style.visibility = 'hidden';
       sidebar.style.opacity = 0;
     } else {
@@ -1098,8 +1113,6 @@ class App {
 
   // Activate drawing a path on the map
   _drawPath() {
-    //show the DrawingModalWindow
-    this.shwDrwngWndw();
     //start drawing the Path (add listener)
     this._toggleDrawingListener();
   }
