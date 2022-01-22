@@ -241,7 +241,7 @@ a:visited {
 }
 
 .define__strategy {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #2d3439;
   font-weight: 600;
   background-image: linear-gradient(to top left, #ffb545, #00c46a);
@@ -260,7 +260,7 @@ a:visited {
   height: fit-content;
   background-color: var(--color-light--1);
   color: #2d3439;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   border: 1px solid black;
   border-radius: 0.5rem;
   cursor: pointer;
