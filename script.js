@@ -49,6 +49,10 @@ const strategyWindow = document.querySelector('.define__strategy');
 const btnModalDoDraw = document.querySelector('.strategy__btn--draw');
 const btnModalDoNotDraw = document.querySelector('.strategy__btn--notdraw');
 const btnModalCancel = document.querySelector('.strategy__btn--cancel');
+const btnSaveChanges = document.querySelector('.btn_save_changes');
+let editFormBox;
+let targetWorkout;
+let targetWorkoutObj;
 ///----------------------------------------------------///
 
 class Workout {
@@ -146,13 +150,16 @@ class App {
     drawCancelBtnExtra.addEventListener('click', this._cancelDrawing.bind(this));
 
     btnModalDoDraw.addEventListener('click', this.agreedToDraw.bind(this));
-
-    btnModalDoNotDraw.addEventListener(
-      'click',
-      this.disagreedToDraw.bind(this)
+    //prettier-ignore
+    btnModalDoNotDraw.addEventListener('click', this.disagreedToDraw.bind(this)
     );
 
     btnModalCancel.addEventListener('click', this.cancelTheRecord.bind(this));
+
+    btnSaveChanges.addEventListener(
+      'click',
+      this.saveChangesEditForm.bind(this)
+    );
     /// ------------------------------------ ///
   }
 
@@ -642,23 +649,25 @@ class App {
       return;
     //hide unnecessary btns
     this._hideBtns();
-    const workout = e.target.closest('.workout');
-    const workoutObj = this.#workouts.find(
-      work => work.id === workout.dataset.id
+    targetWorkout = e.target.closest('.workout');
+    targetWorkoutObj = this.#workouts.find(
+      work => work.id === targetWorkout.dataset.id
     );
 
+    //display the save changes button
+    btnSaveChanges.classList.remove('hidden');
     //hide the workout
-    workout.classList.add('hidden');
+    targetWorkout.classList.add('hidden');
 
     const editHtml = `<form class="form__edit animate">
           <div class="form__edit__heading form__label">${
-            workoutObj.description
+            targetWorkoutObj.description
           }</div>
           <div class="form__row">
             <label class="form__label">Type</label>
             <select class="form__input form__input--type-2">
             ${
-              workoutObj.type === 'running'
+              targetWorkoutObj.type === 'running'
                 ? `<option value="running">Running</option>
               <option value="cycling">Cycling</option>`
                 : `<option value="cycling">Cycling</option><option value="running">Running</option>
@@ -669,7 +678,7 @@ class App {
           <div class="form__row">
             <label class="form__label">Distance</label>
             <input class="form__input form__input--distance" placeholder="km" value="${
-              workoutObj.distance
+              targetWorkoutObj.distance
             }"/>
           </div>
           <div class="form__row">
@@ -677,116 +686,118 @@ class App {
             <input
               class="form__input form__input--duration"
               placeholder="min"
-            value="${workoutObj.duration}"/>
+            value="${targetWorkoutObj.duration}"/>
           </div>
           <div class="form__row">
             <label class="form__label">Cadence</label>
             <input
               class="form__input form__input--cadence-2"
               placeholder="step/min"
-            value="${workoutObj.cadence ? workoutObj.cadence : ''}"/>
+            value="${
+              targetWorkoutObj.cadence ? targetWorkoutObj.cadence : ''
+            }"/>
           </div>
           <div class="form__row form__row--hidden">
             <label class="form__label">Elev Gain</label>
             <input
               class="form__input form__input--elevation-2"
               placeholder="meters"
-            value="${workoutObj.elevation ? workoutObj.elevation : ''}"/>
+            value="${
+              targetWorkoutObj.elevation ? targetWorkoutObj.elevation : ''
+            }"/>
           </div>
           <button class="form__btn">OK</button>
        </form>`;
 
     //insert the EditForm HTML
-    workout.insertAdjacentHTML('afterend', editHtml);
+    targetWorkout.insertAdjacentHTML('afterend', editHtml);
 
-    const editForm = workoutList.querySelector('.form__edit');
-    editForm.scrollIntoView({ behavior: 'smooth' });
+    editFormBox = workoutList.querySelector('.form__edit');
+    editFormBox.scrollIntoView({ behavior: 'smooth' });
 
     //function to toggle the workout type in the EditForm
     const editFrmToggleFn = function () {
-      editForm
+      editFormBox
         .querySelector('.form__input--cadence-2')
         .closest('.form__row')
         .classList.toggle('form__row--hidden');
-      editForm
+      editFormBox
         .querySelector('.form__input--elevation-2')
         .closest('.form__row')
         .classList.toggle('form__row--hidden');
     };
 
-    if (workoutObj.type === 'cycling') {
+    if (targetWorkoutObj.type === 'cycling') {
       editFrmToggleFn();
     }
 
     //add listener to toggle the workout type field
-    editForm
+    editFormBox
       .querySelector('.form__input--type-2')
       .addEventListener('change', function () {
         editFrmToggleFn();
       });
+  }
 
-    //add listener to save and update the workout
-    editForm.addEventListener(
-      'submit',
-      function (e) {
-        e.preventDefault();
+  saveChangesEditForm() {
+    //identify the chosen workout type
+    const typeToChange = editFormBox.querySelector(
+      '.form__input--type-2'
+    ).value;
 
-        //identify the chosen workout type
-        const typeToChange = editForm.querySelector(
-          '.form__input--type-2'
-        ).value;
+    // save new workout data and remove old data
+    const newDistance = +editFormBox.querySelector('.form__input--distance')
+      .value;
+    const newDuration = +editFormBox.querySelector('.form__input--duration')
+      .value;
 
-        // save new workout data and remove old data
-        const newDistance = +editForm.querySelector('.form__input--distance')
-          .value;
-        const newDuration = +editForm.querySelector('.form__input--duration')
-          .value;
+    targetWorkoutObj.type = typeToChange;
+    targetWorkoutObj.distance = newDistance;
+    targetWorkoutObj.duration = newDuration;
 
-        workoutObj.type = typeToChange;
-        workoutObj.distance = newDistance;
-        workoutObj.duration = newDuration;
+    if (typeToChange === 'cycling') {
+      const newElevation = +editFormBox.querySelector(
+        '.form__input--elevation-2'
+      ).value;
+      if (
+        !this.validInput(newDistance, newDuration, newElevation) ||
+        !this.allPositive(newDistance, newDuration, newElevation)
+      )
+        return this.showErrorWindow('Please, enter positive numbers only.');
 
-        if (typeToChange === 'cycling') {
-          const newElevation = +editForm.querySelector(
-            '.form__input--elevation-2'
-          ).value;
-          if (
-            !this.validInput(newDistance, newDuration, newElevation) ||
-            !this.allPositive(newDistance, newDuration, newElevation)
-          )
-            return this.showErrorWindow('Please, enter positive numbers only.');
+      targetWorkoutObj.elevation = newElevation;
+      if (targetWorkoutObj.cadence) delete targetWorkoutObj.cadence;
+      if (targetWorkoutObj.pace) delete targetWorkoutObj.pace;
+      targetWorkoutObj.speed =
+        targetWorkoutObj.distance / targetWorkoutObj.duration;
+    }
 
-          workoutObj.elevation = newElevation;
-          if (workoutObj.cadence) delete workoutObj.cadence;
-          if (workoutObj.pace) delete workoutObj.pace;
-          workoutObj.speed = workoutObj.distance / workoutObj.duration;
-        }
+    if (typeToChange === 'running') {
+      const newCadence = +editFormBox.querySelector('.form__input--cadence-2')
+        .value;
+      if (
+        !this.validInput(newDistance, newDuration, newCadence) ||
+        !this.allPositive(newDistance, newDuration, newCadence)
+      )
+        return this.showErrorWindow('Please, enter positive numbers only.');
 
-        if (typeToChange === 'running') {
-          const newCadence = +editForm.querySelector('.form__input--cadence-2')
-            .value;
-          if (
-            !this.validInput(newDistance, newDuration, newCadence) ||
-            !this.allPositive(newDistance, newDuration, newCadence)
-          )
-            return this.showErrorWindow('Please, enter positive numbers only.');
+      targetWorkoutObj.cadence = newCadence;
+      if (targetWorkoutObj.elevation) delete targetWorkoutObj.elevation;
+      if (targetWorkoutObj.speed) delete targetWorkoutObj.speed;
+      targetWorkoutObj.pace =
+        targetWorkoutObj.duration / targetWorkoutObj.distance;
+    }
 
-          workoutObj.cadence = newCadence;
-          if (workoutObj.elevation) delete workoutObj.elevation;
-          if (workoutObj.speed) delete workoutObj.speed;
-          workoutObj.pace = workoutObj.duration / workoutObj.distance;
-        }
-
-        //remove all workouts from HTML (sidebar)
-        this.clearSidebar();
-        //remove the EditForm
-        editForm.remove();
-        //save the updated workout array in the Local Storage
-        this._setLocalStorage();
-        //Re-render all workouts again
-        this.reRendering(this.#workouts);
-      }.bind(this)
-    );
+    //remove all workouts from HTML (sidebar)
+    this.clearSidebar();
+    //remove the EditForm
+    editFormBox.remove();
+    //save the updated workout array in the Local Storage
+    this._setLocalStorage();
+    //hide the button
+    btnSaveChanges.classList.add('hidden');
+    //Re-render all workouts again
+    this.reRendering(this.#workouts);
   }
 
   // Remove EditForm HTML and show the workout

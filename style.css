@@ -84,8 +84,8 @@ a:visited {
   box-shadow: -3px 0 3px #2f3832;
 }
 
-.btn_cancel_draw_extra {
-  visibility: hidden;
+.btn_cancel_draw_extra,
+.btn_save_changes {
   background-color: var(--color-light--1);
   color: #2d3439;
   font-size: 1.7rem;
@@ -96,6 +96,14 @@ a:visited {
   margin-right: 1rem;
   font-weight: 600;
   box-shadow: -3px 0 3px #2f3832;
+}
+
+.btn_cancel_draw_extra {
+  visibility: hidden;
+}
+
+.btn_save_changes {
+  font-size: 1.5rem;
 }
 
 .toggle-button {
@@ -778,6 +786,11 @@ a:visited {
     font-size: 1.35rem;
     padding: 0.5rem;
     margin-right: 0.3rem;
+  }
+
+  .btn_save_changes {
+    width: 18rem;
+    font-size: 1.25rem;
   }
 
   .blockeverything {
