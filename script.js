@@ -40,7 +40,8 @@ const weatherCond = document.querySelector('.weather__cond');
 const weatherData = document.querySelectorAll('.weather__data');
 const toggleBtn = document.querySelector('.toggle-button');
 const sidebar = document.querySelector('.sidebar');
-
+let drawingProcess = false;
+let drawingFinished = false;
 ///----------------------------------------------------///
 
 class Workout {
@@ -102,6 +103,7 @@ class App {
   pathDistance = 0;
   sorted = false;
   shownAll = false;
+  listener = false;
   /// ------------------------------------ ///
 
   constructor() {
@@ -220,15 +222,13 @@ class App {
 
   //Clear & hide the form and the DrawingModalWindow
   _clearForm() {
-    //Remove all custom listeners
-    this.#map.off();
-    //Reassign 'add workout' Listener
-    this.#map.on(
-      'click',
-      function (e) {
-        if (form.classList.contains('hidden')) this._showForm(e);
-      }.bind(this)
-    );
+    //Remove drawing custom listener
+    if (drawingProcess) {
+      drawingFinished = true;
+      this.#map.fire('click');
+      drawingFinished = false;
+      drawingProcess = false;
+    }
     //remove workout records
     this.pathDistance = 0;
     inputDistance.value =
@@ -1065,42 +1065,88 @@ class App {
   ///////  Functions for Drawing Workout Paths  ///////
 
   //function that draws the path
-  _gainCoords(mapEv) {
-    //get the click coordinates
-    const { lat, lng } = mapEv.latlng;
-    //save the new coords
-    this.pathwayCoords.push([lat, lng]);
-    if (this.pathwayWorkout) {
-      this.pathwayWorkout.remove();
-    }
-    //display the line (update the polyline after every click)
-    this.pathwayWorkout = L.polyline(this.pathwayCoords, {
-      color: 'red',
-      smoothfactor: 5,
-      weight: 8,
-      lineJoin: 'round',
-      lineCap: 'round',
-    }).addTo(this.#map);
+  // _gainCoords(mapEv) {
+  //   //get the click coordinates
+  //   const { lat, lng } = mapEv.latlng;
+  //   //save the new coords
+  //   this.pathwayCoords.push([lat, lng]);
+  //   console.log(this.pathwayCoords);
+  //   if (this.pathwayWorkout) {
+  //     this.pathwayWorkout.remove();
+  //   }
+  //   //display the line (update the polyline after every click)
+  //   this.pathwayWorkout = L.polyline(this.pathwayCoords, {
+  //     color: 'red',
+  //     smoothfactor: 5,
+  //     weight: 8,
+  //     lineJoin: 'round',
+  //     lineCap: 'round',
+  //   }).addTo(this.#map);
 
-    //count distance between point to measure the total distance
-    if (this.pathwayCoords.length >= 2) {
-      const addDistance =
-        this.#map.distance(
-          this.pathwayCoords[this.pathwayCoords.length - 1],
-          this.pathwayCoords[this.pathwayCoords.length - 2]
-        ) / 1000;
-      this.pathDistance += addDistance;
-      //display it in the new workout form
-      inputDistance.value = +this.pathDistance.toFixed(1);
-    }
-  }
+  //   //count distance between point to measure the total distance
+  //   if (this.pathwayCoords.length >= 2) {
+  //     const addDistance =
+  //       this.#map.distance(
+  //         this.pathwayCoords[this.pathwayCoords.length - 1],
+  //         this.pathwayCoords[this.pathwayCoords.length - 2]
+  //       ) / 1000;
+  //     this.pathDistance += addDistance;
+  //     //display it in the new workout form
+  //     inputDistance.value = +this.pathDistance.toFixed(1);
+  //   }
+  // }
 
   // Activate drawing a path on the map
   _drawPath() {
     //show the DrawingModalWindow
     this.shwDrwngWndw();
     //start drawing the Path (add listener)
-    this.#map.on('click', this._gainCoords.bind(this));
+    this._toggleDrawingListener();
+  }
+
+  _toggleDrawingListener() {
+    const offListener = function () {
+      this.#map.off('click', gainCoords);
+      console.log('I am off now');
+    }.bind(this);
+
+    const gainCoords = function (mapEv) {
+      if (!drawingFinished) {
+        //get the click coordinates
+        const { lat, lng } = mapEv.latlng;
+        //save the new coords
+        this.pathwayCoords.push([lat, lng]);
+        console.log(this.pathwayCoords);
+        if (this.pathwayWorkout) {
+          this.pathwayWorkout.remove();
+        }
+        //display the line (update the polyline after every click)
+        this.pathwayWorkout = L.polyline(this.pathwayCoords, {
+          color: 'red',
+          smoothfactor: 5,
+          weight: 8,
+          lineJoin: 'round',
+          lineCap: 'round',
+        }).addTo(this.#map);
+
+        //count distance between point to measure the total distance
+        if (this.pathwayCoords.length >= 2) {
+          const addDistance =
+            this.#map.distance(
+              this.pathwayCoords[this.pathwayCoords.length - 1],
+              this.pathwayCoords[this.pathwayCoords.length - 2]
+            ) / 1000;
+          this.pathDistance += addDistance;
+          //display it in the new workout form
+          inputDistance.value = +this.pathDistance.toFixed(1);
+        }
+      }
+      if (drawingFinished) offListener();
+    }.bind(this);
+
+    this.#map.on('click', gainCoords);
+    drawingProcess = true;
+    console.log('I am on now');
   }
 
   _listenersCancelDrawing() {
