@@ -670,17 +670,17 @@ a:visited {
 
   .top-menu {
     width: 80vw;
-    max-height: 5.5rem;
-    height: 5.5rem;
-    min-height: 5.5rem;
+    max-height: 7rem;
+    height: 7rem;
+    min-height: 7rem;
   }
 
   .sidebar {
     padding: 1rem 2rem 2rem 2rem;
     width: 80vw;
-    height: calc(100vh - 5.4rem);
-    max-height: calc(100vh - 5.4rem);
-    min-height: calc(100vh - 5.4rem);
+    height: calc(100vh - 6.9rem);
+    max-height: calc(100vh - 6.9rem);
+    min-height: calc(100vh - 6.9rem);
     bottom: 0;
     visibility: hidden;
     opacity: 0;
@@ -801,7 +801,6 @@ a:visited {
     @media (max-height: 30rem) {
       .sidebar {
         width: 100vw;
-        height: calc(100vh - 5.5rem);
         padding-bottom: 0.5rem;
         margin-bottom: 0.5rem;
       }
@@ -861,15 +860,15 @@ a:visited {
 
   .top-menu {
     width: 50vw;
-    max-height: 5.5rem;
-    height: 5.5rem;
-    min-height: 5.5rem;
+    max-height: 7rem;
+    height: 7rem;
+    min-height: 7rem;
   }
 
   .sidebar {
-    height: calc(100vh - 5.4rem);
-    max-height: calc(100vh - 5.4rem);
-    min-height: calc(100vh - 5.4rem);
+    height: calc(100vh - 6.9rem);
+    max-height: calc(100vh - 6.9rem);
+    min-height: calc(100vh - 6.9rem);
     padding: 1rem 1.5rem 2rem 1.5rem;
     width: 50vw;
     bottom: 0;
