@@ -253,6 +253,7 @@ class App {
     //close unnecessary forms
     if (workoutList.querySelector('.form__edit')) {
       this.editFormRemove();
+      // btnSaveChanges.classList.add('hidden');
     }
     /// ------------------------------------ ///
   }
@@ -533,6 +534,8 @@ class App {
         workoutEl.style.backgroundColor = '#5d666e';
         //scroll animation
         workoutEl.scrollIntoView({ behavior: 'smooth' });
+
+        window.scrollTo(0, 0, { behavior: smooth });
       }
 
       this._hideBtns();
@@ -803,6 +806,7 @@ class App {
   // Remove EditForm HTML and show the workout
   editFormRemove() {
     workoutList.querySelector('.form__edit').remove();
+    btnSaveChanges.classList.add('hidden');
     //Make the edited workout visible again
     containerWorkouts.querySelectorAll('.workout').forEach(wk => {
       if (wk.classList.contains('hidden')) wk.classList.remove('hidden');
@@ -817,6 +821,7 @@ class App {
     )
       return;
     this.editFormRemove();
+    // btnSaveChanges.classList.add('hidden');
   }
 
   ///////  Functions for Deleting Workouts  ///////
@@ -1030,6 +1035,7 @@ class App {
     this.clsMdlWndwFn();
     if (workoutList.querySelector('.form__edit')) {
       this.editFormRemove();
+      // btnSaveChanges.classList.add('hidden');
     }
     //check if the list is not sorted
     if (this.sorted === false) {
