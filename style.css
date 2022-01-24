@@ -491,7 +491,7 @@ a:visited {
 }
 
 .weather__desc {
-  font-weight: 1000;
+  font-weight: 800;
 }
 /* /////////////////////////////////////////// */
 
@@ -743,7 +743,7 @@ a:visited {
   .weather__window {
     font-size: 1.1rem;
     width: 23rem;
-    bottom: 0.75rem;
+    bottom: 3.5rem;
     right: 0.5rem;
   }
 
@@ -925,7 +925,7 @@ a:visited {
   .weather__window {
     font-size: 1.1rem;
     width: 25rem;
-    bottom: 1rem;
+    bottom: 3.5rem;
     right: 0.5rem;
   }
 
