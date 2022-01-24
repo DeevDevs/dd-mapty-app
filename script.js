@@ -527,6 +527,7 @@ class App {
         //scroll animation
         workoutEl.scrollIntoView({ behavior: 'smooth' });
         this._hideSidebarSoon();
+        window.scrollTo(0, 0);
       } else {
         //return all workouts their original color
         this.defaultColor();
@@ -535,7 +536,7 @@ class App {
         //scroll animation
         workoutEl.scrollIntoView({ behavior: 'smooth' });
 
-        window.scrollTo(0, 0, { behavior: smooth });
+        window.scrollTo(0, 0);
       }
 
       this._hideBtns();
