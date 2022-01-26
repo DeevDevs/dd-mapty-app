@@ -163,10 +163,12 @@ class App {
       'click',
       this.saveChangesEditForm.bind(this)
     );
+
     btnInstructions.addEventListener(
-      '.click',
+      'click',
       this.instructionsHideRemember.bind(this)
     );
+
     btnLogo.addEventListener('click', this.displayInstructions.bind(this));
     /// ------------------------------------ ///
   }
@@ -1359,11 +1361,16 @@ class App {
   }
 
   //instructions window related functions
-  instructionsHideRemember() {}
+  instructionsHideRemember() {
+    console.log('Get is clicked');
+    windowInstructions.classList.remove('instructions-window__shown');
+    overlay.classList.add('hidden');
+  }
 
   displayInstructions() {
     console.log('I am clicked');
-    // windowInstructions.style[translateY] = 'calc(0% + 2.5rem)';
+    windowInstructions.classList.add('instructions-window__shown');
+    overlay.classList.remove('hidden');
   }
 }
 
