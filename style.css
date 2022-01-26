@@ -338,30 +338,41 @@ a:visited {
 }
 
 .define__strategy {
-  font-size: 1.4rem;
+  padding: 1rem;
+  width: 88vw;
+  /* width: calc(100vw - 90vw); */
+  position: absolute;
+  z-index: 600;
+  top: 40%;
+  left: 6vw;
+  border: 2px solid var(--color-dark--1);
+  border-radius: 1rem;
+  font-size: 1.7rem;
   color: #2d3439;
   font-weight: 600;
   background-image: linear-gradient(to top left, #ffb545, #00c46a);
 }
 
 .strategy__btns--container {
-  margin-top: 1rem;
+  margin: 1rem auto;
   width: 100%;
+  max-width: 35rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .btn__strategy {
+  min-width: 7rem;
   width: fit-content;
   height: fit-content;
   background-color: var(--color-light--1);
   color: #2d3439;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   border: 1px solid black;
   border-radius: 0.5rem;
   cursor: pointer;
-  padding: 0.6rem;
+  padding: 1.2rem 0.6rem;
   font-weight: 600;
   box-shadow: -3px 0 3px #2f3832;
   /* transition: all 0.2s; */

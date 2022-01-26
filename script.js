@@ -56,6 +56,7 @@ const btnLogo = document.querySelector('.logo');
 let editFormBox;
 let targetWorkout;
 let targetWorkoutObj;
+let seenTheInstruction = false;
 ///----------------------------------------------------///
 
 class Workout {
@@ -224,6 +225,12 @@ class App {
       this._renderWorkoutPath(wk);
       this.#allCoords.push(wk.coords);
     });
+
+    //Hide Instructions or Not
+    if (seenTheInstruction === false) {
+      windowInstructions.classList.add('instructions-window__shown');
+      overlay.classList.remove('hidden');
+    }
 
     //My Updates ///-/// display btns, if necessary
     if (this.#workouts.length !== 0) {
@@ -575,6 +582,9 @@ class App {
   // Retrieve workouts from the local storage
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
+    const seen = JSON.parse(localStorage.getItem('seenInstructions'));
+    console.log(seen);
+    if (seen) seenTheInstruction = true;
     if (!data) return;
 
     //store and render workouts (in the sidebar)
@@ -1362,13 +1372,18 @@ class App {
 
   //instructions window related functions
   instructionsHideRemember() {
-    console.log('Get is clicked');
+    if (seenTheInstruction === false) {
+      seenTheInstruction = true;
+      localStorage.setItem(
+        'seenInstructions',
+        JSON.stringify(seenTheInstruction)
+      );
+    }
     windowInstructions.classList.remove('instructions-window__shown');
     overlay.classList.add('hidden');
   }
 
   displayInstructions() {
-    console.log('I am clicked');
     windowInstructions.classList.add('instructions-window__shown');
     overlay.classList.remove('hidden');
   }
