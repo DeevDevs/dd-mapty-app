@@ -50,6 +50,9 @@ const btnModalDoDraw = document.querySelector('.strategy__btn--draw');
 const btnModalDoNotDraw = document.querySelector('.strategy__btn--notdraw');
 const btnModalCancel = document.querySelector('.strategy__btn--cancel');
 const btnSaveChanges = document.querySelector('.btn_save_changes');
+const btnInstructions = document.querySelector('.instructions-window__button');
+const windowInstructions = document.querySelector('.instructions-window');
+const btnLogo = document.querySelector('.logo');
 let editFormBox;
 let targetWorkout;
 let targetWorkoutObj;
@@ -160,6 +163,11 @@ class App {
       'click',
       this.saveChangesEditForm.bind(this)
     );
+    btnInstructions.addEventListener(
+      '.click',
+      this.instructionsHideRemember.bind(this)
+    );
+    btnLogo.addEventListener('click', this.displayInstructions.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -1348,6 +1356,14 @@ class App {
     this._clearForm();
     strategyWindow.classList.add('hidden');
     overlay.classList.add('hidden');
+  }
+
+  //instructions window related functions
+  instructionsHideRemember() {}
+
+  displayInstructions() {
+    console.log('I am clicked');
+    // windowInstructions.style[translateY] = 'calc(0% + 2.5rem)';
   }
 }
 
