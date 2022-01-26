@@ -53,6 +53,7 @@ const btnSaveChanges = document.querySelector('.btn_save_changes');
 const btnInstructions = document.querySelector('.instructions-window__button');
 const windowInstructions = document.querySelector('.instructions-window');
 const btnLogo = document.querySelector('.logo');
+
 let editFormBox;
 let targetWorkout;
 let targetWorkoutObj;
@@ -172,6 +173,8 @@ class App {
     );
 
     btnLogo.addEventListener('click', this.displayInstructions.bind(this));
+
+    overlay.addEventListener('click', this.overlayClicks.bind(this));
     /// ------------------------------------ ///
   }
 
@@ -1131,40 +1134,6 @@ class App {
     this.sorted = true;
   }
 
-  ///////  Functions for Drawing Workout Paths  ///////
-
-  //function that draws the path
-  // _gainCoords(mapEv) {
-  //   //get the click coordinates
-  //   const { lat, lng } = mapEv.latlng;
-  //   //save the new coords
-  //   this.pathwayCoords.push([lat, lng]);
-  //   console.log(this.pathwayCoords);
-  //   if (this.pathwayWorkout) {
-  //     this.pathwayWorkout.remove();
-  //   }
-  //   //display the line (update the polyline after every click)
-  //   this.pathwayWorkout = L.polyline(this.pathwayCoords, {
-  //     color: 'red',
-  //     smoothfactor: 5,
-  //     weight: 8,
-  //     lineJoin: 'round',
-  //     lineCap: 'round',
-  //   }).addTo(this.#map);
-
-  //   //count distance between point to measure the total distance
-  //   if (this.pathwayCoords.length >= 2) {
-  //     const addDistance =
-  //       this.#map.distance(
-  //         this.pathwayCoords[this.pathwayCoords.length - 1],
-  //         this.pathwayCoords[this.pathwayCoords.length - 2]
-  //       ) / 1000;
-  //     this.pathDistance += addDistance;
-  //     //display it in the new workout form
-  //     inputDistance.value = +this.pathDistance.toFixed(1);
-  //   }
-  // }
-
   // Activate drawing a path on the map
   _drawPath() {
     //start drawing the Path (add listener)
@@ -1389,6 +1358,13 @@ class App {
   displayInstructions() {
     windowInstructions.classList.add('instructions-window__shown');
     overlay.classList.remove('hidden');
+  }
+
+  overlayClicks() {
+    if (windowInstructions.classList.contains('instructions-window__shown')) {
+      windowInstructions.classList.remove('instructions-window__shown');
+      overlay.classList.add('hidden');
+    }
   }
 }
 
