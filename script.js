@@ -133,6 +133,7 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this)); // make the form submission create a new workout
     saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this)); // make the form submission create a new workout
     saveWorkoutBtnExtra.addEventListener('click', this._newWorkout.bind(this));
+
     inputType.addEventListener('change', this._toggleElevationField); // switch the workout type
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this)); // move to the PopUp once I click on the workout
 
@@ -319,6 +320,8 @@ class App {
   async _newWorkout(e) {
     try {
       e.preventDefault();
+
+      if ((sidebar.style.invisibility = 'hidden')) this._toggleWindow();
 
       //get the data from the form
       const type = inputType.value;
