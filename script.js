@@ -589,7 +589,7 @@ class App {
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
     const seen = JSON.parse(localStorage.getItem('seenInstructions'));
-    console.log(seen);
+    // console.log(seen);
     if (seen) seenTheInstruction = true;
     if (!data) return;
 
@@ -1143,7 +1143,7 @@ class App {
   _toggleDrawingListener() {
     const offListener = function () {
       this.#map.off('click', gainCoords);
-      console.log('I am off now');
+      // console.log('I am off now');
     }.bind(this);
 
     const gainCoords = function (mapEv) {
@@ -1152,7 +1152,7 @@ class App {
         const { lat, lng } = mapEv.latlng;
         //save the new coords
         this.pathwayCoords.push([lat, lng]);
-        console.log(this.pathwayCoords);
+        // console.log(this.pathwayCoords);
         if (this.pathwayWorkout) {
           this.pathwayWorkout.remove();
         }
@@ -1182,7 +1182,7 @@ class App {
 
     this.#map.on('click', gainCoords);
     drawingProcess = true;
-    console.log('I am on now');
+    // console.log('I am on now');
   }
 
   _listenersCancelDrawing() {
