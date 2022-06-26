@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DeevDevs/mapty-portfolio-project.git"
+    "url": "git+https://github.com/DeevDevs/dd-mapty-app.git"
   },
   "author": "Jonas Shmedtmann and Dmitriy Vnuchkov",
   "license": "ISC",
@@ -17,7 +17,7 @@
     "parcel": "^2.0.0"
   },
   "bugs": {
-    "url": "https://github.com/DeevDevs/mapty-portfolio-project/issues"
+    "url": "https://github.com/DeevDevs/dd-mapty-app/issues"
   },
-  "homepage": "https://github.com/DeevDevs/mapty-portfolio-project#readme"
+  "homepage": "https://github.com/DeevDevs/dd-mapty-app#readme"
 }
