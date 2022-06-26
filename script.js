@@ -2,9 +2,12 @@
 
 // prettier-ignore
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+//this is a short database for possible weather condition (for the API)
 // prettier-ignore
 const wmo = { 0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Fog', 48: 'Depositing rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle', 56: 'Light freezing drizzle', 57: 'Dense freezing drizzle', 61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 66: 'Light freezing rain', 67: 'Heavy freezing rain', 71: 'Slight snowfall', 73: 'Moderate snowfall', 75: 'Heavy snowfall', 77: 'Snow grains', 80: 'Slight rain showers', 81: 'Moderate rain showers', 82: 'Heavy rain showers', 85: 'Slight snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorm', 96: 'Thuderstorm with slight hail', 97: 'Thuderstorm with heavy hail', };
 
+/* ----------------------- VARIABLES ----------------------- */
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
@@ -12,7 +15,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
-//My Updates ///-///
+/* ----------------------- Add-ons ----------------------- */
 const workoutList = document.querySelector('.workouts');
 const overlay = document.querySelector('.blockeverything');
 const thisMap = document.querySelector('.thismap');
@@ -23,8 +26,9 @@ const drawWindow = document.querySelector('.drawing_panel');
 const confirmPhrase = document.querySelector('.confirm_content');
 const drawInstructions = document.querySelector('.instructions');
 const drawCancelBtn = document.querySelector('.btn_cancel_draw');
+const drawCancelStroke = document.querySelector('.btn_cancel_stroke');
+const drawCancelStrokeExtra = document.querySelector('.btn_cancel_stroke_extra');
 const drawCancelBtnExtra = document.querySelector('.btn_cancel_draw_extra');
-// const drawEraseBtn = document.querySelector('.btn_erase_draw');
 const modalDeleteBtn = document.querySelector('.modal__btn__delete');
 const modalCancelBtn = document.querySelector('.modal__btn__cancel');
 const errorOkBtn = document.querySelector('.modal__btn__ok');
@@ -53,13 +57,13 @@ const btnSaveChanges = document.querySelector('.btn_save_changes');
 const btnInstructions = document.querySelector('.instructions-window__button');
 const windowInstructions = document.querySelector('.instructions-window');
 const btnLogo = document.querySelector('.logo');
-
 let editFormBox;
 let targetWorkout;
 let targetWorkoutObj;
 let seenTheInstruction = false;
 ///----------------------------------------------------///
 
+// class with extensions for types of workouts
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
@@ -105,7 +109,7 @@ class App {
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
-  //My Updates ///-///
+  /* ----------------------- Add-ons ----------------------- */
   #allMarkers = [];
   #allPaths = [];
   #allCoords = [];
@@ -120,83 +124,67 @@ class App {
   sorted = false;
   shownAll = false;
   listener = false;
-  /// ------------------------------------ ///
+  /// ------------------------------------------------------- ///
 
   constructor() {
-    //Get the user's position
     this._getPosition();
-    //Retrieve data from the Local Storage
     this._getLocalStorage();
-    //Adding Event Listeners
     this._listenersCancelDrawing();
     this._listenersErrorBtn();
-
-    form.addEventListener('submit', this._newWorkout.bind(this)); // make the form submission create a new workout
-    saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this)); // make the form submission create a new workout
+    form.addEventListener('submit', this._newWorkout.bind(this));
+    saveWorkoutBtn.addEventListener('click', this._newWorkout.bind(this));
     saveWorkoutBtnExtra.addEventListener('click', this._newWorkout.bind(this));
-
-    inputType.addEventListener('change', this._toggleElevationField); // switch the workout type
-    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this)); // move to the PopUp once I click on the workout
-
-    //My Updates ///-///
-    containerWorkouts.addEventListener('click', this._confirmDelete.bind(this)); // identify the target workout and show ModalWindow (RF)
-    containerWorkouts.addEventListener('click', this._editWorkout.bind(this)); // identify the target workout and show EditForm (RF)
-    document.addEventListener('keydown', this.cancelOrDlt.bind(this)); // get confirmation through ModalWindow
-    modalWindowConfirm.addEventListener('click', this.cancelOrDlt.bind(this)); // get ConfirmationModalWindow
-    sortBtn.addEventListener('click', this.openTypeMenu.bind(this)); // activate dropDown menu for sorting
-    deleteAllBtn.addEventListener('click', this._deleteAllWorkouts.bind(this)); // delete all workouts
+    inputType.addEventListener('change', this._toggleElevationField);
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    /* ----------------------- Add-ons ----------------------- */
+    containerWorkouts.addEventListener('click', this._confirmDelete.bind(this));
+    containerWorkouts.addEventListener('click', this._editWorkout.bind(this));
+    document.addEventListener('keydown', this.cancelOrDlt.bind(this));
+    modalWindowConfirm.addEventListener('click', this.cancelOrDlt.bind(this));
+    sortBtn.addEventListener('click', this.openTypeMenu.bind(this));
+    deleteAllBtn.addEventListener('click', this._deleteAllWorkouts.bind(this));
     showAllBtn.addEventListener('click', this._showAllWorkouts.bind(this));
-    //makes entire functional sidebar hidden
     toggleBtn.addEventListener('click', this._toggleWindow.bind(this));
-    //check width to set the display of sidebar
     window.addEventListener('load', this._checkWidth.bind(this));
-    //listeners to cancel path drawing
     drawCancelBtn.addEventListener('click', this._cancelDrawing.bind(this));
-    //prettier-ignore
     drawCancelBtnExtra.addEventListener('click', this._cancelDrawing.bind(this));
-
     btnModalDoDraw.addEventListener('click', this.agreedToDraw.bind(this));
-    //prettier-ignore
-    btnModalDoNotDraw.addEventListener('click', this.disagreedToDraw.bind(this)
-    );
-
+    btnModalDoNotDraw.addEventListener('click', this.disagreedToDraw.bind(this));
     btnModalCancel.addEventListener('click', this.cancelTheRecord.bind(this));
-
-    btnSaveChanges.addEventListener(
-      'click',
-      this.saveChangesEditForm.bind(this)
-    );
-
-    btnInstructions.addEventListener(
-      'click',
-      this.instructionsHideRemember.bind(this)
-    );
-
+    btnSaveChanges.addEventListener('click', this.saveChangesEditForm.bind(this));
+    btnInstructions.addEventListener('click', this.instructionsHideRemember.bind(this));
     btnLogo.addEventListener('click', this.displayInstructions.bind(this));
-
     overlay.addEventListener('click', this.overlayClicks.bind(this));
-    /// ------------------------------------ ///
+    drawCancelStroke.addEventListener('click', this._cancelLastDrawingLine.bind(this));
+    drawCancelStrokeExtra.addEventListener('click', this._cancelLastDrawingLine.bind(this));
+    ///----------------------------------------------------///
   }
 
-  // Identify user's coordinates and load the Leaflet map
+  /**
+   * identify user's coordinates  (определяет местоположение пользователя)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov (original idea by Jonas Shmedtmann)
+   */
   _getPosition() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        this._loadMap.bind(this),
-        function () {
-          alert(`We couldn't get your current position`);
-        }
-      );
+      navigator.geolocation.getCurrentPosition(this._loadMap.bind(this), function () {
+        alert(`We couldn't get your current position`);
+      });
     }
   }
 
-  // Load the Leaflet map
+  /**
+   * load the Leaflet map with user's coordinates (прогружает карту от Leaflet API в районе местоположения пользователя)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov and Jonas Shmedtmann)
+   */
   _loadMap(position) {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     this.myCoords = [latitude, longitude];
 
-    //show my current position area
     this.#map = L.map('map', {
       minZoom: 4,
       doubleClickZoom: false,
@@ -204,10 +192,9 @@ class App {
     }).setView(this.myCoords, this.#mapZoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
-    //add the click listener to the Map
+    // add the click listener to the Map (привязывает приемник событий к карте)
     this.#map.on(
       'click',
       function (e) {
@@ -222,66 +209,64 @@ class App {
         }
       }.bind(this)
     );
-
-    //render workouts from the local storage (on the map)
+    //render workouts from the local storage (рендерит уже имеющиеся записи на карте)
     this.#workouts.forEach(wk => {
       this._renderWorkoutMarker(wk);
       this._renderWorkoutPath(wk);
       this.#allCoords.push(wk.coords);
     });
-
-    //Hide Instructions or Not
+    // hides the app instructions, if required (прячет инструкии при повторном посещении приложения)
     if (seenTheInstruction === false) {
       windowInstructions.classList.add('instructions-window__shown');
       overlay.classList.remove('hidden');
     }
-
-    //My Updates ///-/// display btns, if necessary
+    // displays workout list buttons, if required (отображает кнопки над списком тренировок, если нужно)
     if (this.#workouts.length !== 0) {
       this.displayButtons();
     }
-    /// ------------------------------------ ///
   }
 
-  // Show the new workout form
+  /**
+   * triggers events for making a new workout record (запускает события необходимые для создания новой записи тренировок)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov and Jonas Shmedtmann
+   */
   _showForm(mapE) {
-    //return all workouts their original color
+    // return all workouts their original color (возвращает стили списка к изначальным значениям)
     this.defaultColor();
-    //hide the weather window
+    // hide and/or displays certain buttons and windows (прячет и/или отображает нужные кнопки и окошки)
     this.clsWthrMdlWndw();
-    //display save and cancel buttons
     if (window.innerWidth < 641 || window.innerHeight < 641) {
       saveWorkoutBtnExtra.classList.remove('hidden');
       drawCancelBtnExtra.classList.remove('hidden');
+      drawCancelStrokeExtra.classList.remove('hidden');
     }
     if (window.innerWidth > 641 && window.innerHeight > 641) {
       this.shwDrwngWndw();
     }
-
     workoutList.scrollTo(0, 0);
-    //hide edit/delete buttons, if necessary
     if (this.currentTargetBtns) this._hideBtns();
+    // stores data in external variables (сохраняет данные во внешних переменных)
     this.#mapEvent = mapE;
-    this.pathwayCoords.push([
-      this.#mapEvent.latlng.lat,
-      this.#mapEvent.latlng.lng,
-    ]);
+    this.pathwayCoords.push([this.#mapEvent.latlng.lat, this.#mapEvent.latlng.lng]);
+    //adapts interface for the task (изменяет интерфейс для выполнения задачи)
     form.classList.remove('hidden');
     inputDistance.focus();
-
-    //My Updates ///-/// show the PathDrawing Modal Window
-    this._drawPath();
-    //close unnecessary forms
+    this._toggleDrawingListener();
     if (workoutList.querySelector('.form__edit')) {
       this.editFormRemove();
-      // btnSaveChanges.classList.add('hidden');
     }
-    /// ------------------------------------ ///
   }
 
-  //Clear & hide the form and the DrawingModalWindow
+  /**
+   * clears and hides edit form and drawing window (прячет форму для изменения записи а также диалоговое окно)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov and Jonas Shmedtmann
+   */
   _clearForm() {
-    //Remove drawing custom listener
+    // remove drawing custom listener (отключает специальный приемник событий для наложения маршрута)
     if (drawingProcess) {
       drawingFinished = true;
       this.#map.fire('click');
@@ -290,50 +275,51 @@ class App {
     }
     saveWorkoutBtnExtra.classList.add('hidden');
     drawCancelBtnExtra.classList.add('hidden');
+    drawCancelStrokeExtra.classList.add('hidden');
 
-    //remove workout records
+    // removes new workout form (очищает и прячет форму записи тренировки)
     this.pathDistance = 0;
-    inputDistance.value =
-      inputCadence.value =
-      inputDuration.value =
-      inputElevation.value =
-        '';
+    inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = '';
     form.style.display = 'none';
     form.classList.add('hidden');
     setTimeout(() => (form.style.display = 'grid'), 10);
 
-    //My Updates ///-/// avoid error paths
     if (this.pathwayCoords) this.pathwayCoords = [];
-    //check if the DrawingModalWindow is open
     this.clsDrwngWndw();
-    /// ------------------------------------ ///
   }
-
-  //Switch the workout type in the new workout form
+  // switch the workout type in the new workout form (изменяет форму при выборе типа тренировок)
   _toggleElevationField() {
     inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
     inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
   }
 
-  //Functions to check validity of inputs
+  /**
+   * creates and saves a new record (создает и созраняет новую запись)
+   * @param {array}
+   * @returns {boolean}
+   * @author Dmitriy Vnuchkov (original idea by Jonas Shmedtmann)
+   */
   validInput = (...inputs) => inputs.every(inp => Number.isFinite(inp));
   allPositive = (...inputs) => inputs.every(inp => inp > 0);
 
-  //Create and store new workout
+  /**
+   * creates and saves a new record (создает и созраняет новую запись)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov and Jonas Shmedtmann
+   */
   async _newWorkout(e) {
     try {
       e.preventDefault();
-
-      if ((sidebar.style.invisibility = 'hidden')) this._toggleWindow();
-
-      //get the data from the form
+      if ((sidebar.style.invisibility = 'hidden') && window.innerWidth <= 640) this._toggleWindow();
+      // get the data from the form (выводит данные из формы)
       const type = inputType.value;
       const distance = +inputDistance.value;
       const duration = +inputDuration.value;
       let lat;
       let lng;
 
-      //My Updates ///-/// check if the pathway was drawn and get coordinates
+      // check if the pathway was drawn and get coordinates (проверяет, был ли наложен маршрут)
       if (!this.pathwayWorkout) {
         lat = this.#mapEvent.latlng.lat;
         lng = this.#mapEvent.latlng.lng;
@@ -342,34 +328,22 @@ class App {
         lat = this.pathwayWorkout.getCenter().lat;
         lng = this.pathwayWorkout.getCenter().lng;
       }
-      /// ------------------------------------ ///
-
       let workout;
-
-      //identify workout type
+      //identify workout type (определяет тип тренировки)
       if (type === 'running') {
         const cadence = +inputCadence.value;
-        if (
-          !this.validInput(distance, duration, cadence) ||
-          !this.allPositive(distance, duration, cadence)
-        )
-          return this.showErrorWindow('Please, enter positive numbers only.'); // display ErrorModalWindow, if data is irrelevant
-
+        if (!this.validInput(distance, duration, cadence) || !this.allPositive(distance, duration, cadence))
+          return this.showErrorWindow('Please, enter positive numbers only.'); // display ErrorModalWindow, if data is irrelevant (сообщает о наличии ошибки в веденных данных)
         workout = new Running([lat, lng], distance, duration, cadence);
       }
-
       if (type === 'cycling') {
         const elevation = +inputElevation.value;
-        if (
-          !this.validInput(distance, duration, elevation) ||
-          !this.allPositive(distance, duration)
-        )
+        if (!this.validInput(distance, duration, elevation) || !this.allPositive(distance, duration))
           return this.showErrorWindow('Please, enter positive numbers only.');
-
         workout = new Cycling([lat, lng], distance, duration, elevation);
       }
 
-      //My Updates ///-/// add pathway data
+      // adds pathway data (добавляет данные о маршруте)
       if (this.pathwayWorkout) {
         this.pathwayWorkout.remove();
         workout.path = this.pathwayCoords;
@@ -377,36 +351,31 @@ class App {
       }
       //add coords to the common array
       this.#allCoords.push([lat, lng]);
-      /// ------------------------------------ ///
 
-      if (window.innerWidth < 641 && sidebar.style.visibility === 'visible')
+      if (window.innerWidth <= 640 && sidebar.style.visibility === 'visible') {
         this._toggleWindow();
-      //hide the Form and the PathDrawingModal + clear fields
+      }
+      // renders and stores data + weather, as well as returns default parameters and styles (рендерит и созраняет данные, а также возвращает исходные параметры и стили)
       this._clearForm();
-      //render the workout path, if nesessary
       this._renderWorkoutPath(workout);
-      //add a new object to the workout array
       this.#workouts.push(workout);
-      //render it on the list
       this._renderWorkout(workout);
-      //render it on the map
       this._renderWorkoutMarker(workout);
-      //record the weather
       await this._localWeather(workout);
-      // //show the weather window
-      // this._workoutWeather(workout);
-      //save all workouts in the local storage
       this._setLocalStorage();
-      //set default drawing parameters
       this._setDefaultDrawingParameters();
     } catch (err) {
       this.showErrorWindow(err.message);
     }
   }
 
-  // Add markers to the map
+  /**
+   * adds markers to the map (добавляет маркеры на карту)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov (original idea by Jonas Shmedtmann)
+   */
   _renderWorkoutMarker(workout) {
-    //save it into markers array
     this.#allMarkers.push(
       L.marker(workout.coords)
         .addTo(this.#map)
@@ -421,14 +390,17 @@ class App {
           }),
           { autoPan: false }
         )
-        .setPopupContent(
-          `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
-        )
+        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`)
         .openPopup()
     );
   }
 
-  // Render workout path, if it was drawn
+  /**
+   * renders the pathways of workouts (добавляет маршруты на карту)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _renderWorkoutPath(workout) {
     if (workout.path.length > 0) {
       this.#allPaths.push(
@@ -445,32 +417,34 @@ class App {
     }
   }
 
-  // Prepare workout description for the new workout in the sidebar
+  /**
+   * prepares workout description (подготавливает описание тренировки)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov (original idea by Jonas Shmedtmann)
+   */
   _setDescription(workout) {
     // prettier-ignore
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     let date = new Date(workout.date);
-    workout.description = `${workout.type[0]
-      .toUpperCase()
-      .concat(workout.type.slice(1))} on ${
+    workout.description = `${workout.type[0].toUpperCase().concat(workout.type.slice(1))} on ${
       months[date.getMonth()]
     } ${date.getDate()}`;
   }
 
-  // Render workout in the sidebar
+  /**
+   * render workout in the sidebar(добавляет тренировку в список слева)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov (original idea by Jonas Shmedtmann)
+   */
   _renderWorkout(workout) {
-    //set Description
     this._setDescription(workout);
-    //generate and add HTML elements
     const html = `
-    <li class="workout workout--${workout.type}" data-id="${workout.id}" id="${
-      workout.id
-    }">
+    <li class="workout workout--${workout.type}" data-id="${workout.id}" id="${workout.id}">
           <h2 class="workout__title">${workout.description}</h2>
           <div class="workout__details">
-            <span class="workout__icon">${
-              workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-            }</span> 
+            <span class="workout__icon">${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}</span> 
             <span class="workout__value">${workout.distance}</span>
             <span class="workout__unit">km</span>
           </div>
@@ -517,139 +491,116 @@ class App {
 
     form.insertAdjacentHTML('afterend', html.concat(html2));
 
-    //show the buttons
+    // display delete/show/sort buttons (показывает кнопки из меню для списка)
     if (sortBtn.classList.contains('hidden')) {
       this.displayButtons();
     }
   }
 
-  // On the map, move to the clicked workout
+  /**
+   * moves to the clicked workout (переходит к выбранной тренировке на карте)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov and Jonas Shmedtmann
+   */
   _moveToPopup(e) {
-    //My Updates ///-/// prevent errors and hide unnecessary forms
+    // hides unnecessary forms (прячет ненужные формы и окна)
     if (e.target.classList.contains('btn')) return;
     if (e.target.closest('form')) return;
     this._clearForm();
     this.clsEdtWndwFn(e);
 
-    //---------------------------------///
     const workoutEl = e.target.closest(`.workout`);
     if (!workoutEl) return;
 
-    const workout = this.#workouts.find(
-      work => work.id === workoutEl.dataset.id
-    );
+    const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id);
     if (this.currentTarget === workout.id) {
       this._displayBtns();
     } else if (!this.currentTarget || this.currentTarget !== workout.id) {
-      // hide sidebar, if necessary
-      if (window.innerWidth <= 799) {
-        //return all workouts their original color
-        this.defaultColor();
-        //color the targeted workout preview
-        workoutEl.style.backgroundColor = '#5d666e';
-        //scroll animation
-        workoutEl.scrollIntoView({ behavior: 'smooth' });
-        this._hideSidebarSoon();
-        window.scrollTo(0, 0);
-      } else {
-        //return all workouts their original color
-        this.defaultColor();
-        //color the targeted workout preview
-        workoutEl.style.backgroundColor = '#5d666e';
-        //scroll animation
-        workoutEl.scrollIntoView({ behavior: 'smooth' });
-
-        window.scrollTo(0, 0);
-      }
-
+      // changes styles and animates transition (меняет стили и анимирует переход)
+      this.defaultColor();
+      workoutEl.style.backgroundColor = '#5d666e';
+      workoutEl.scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo(0, 0);
+      // hide sidebar, if necessary (прячет список в случае смартфонов)
+      if (window.innerWidth <= 799) this._hideSidebarSoon();
       this._hideBtns();
-
-      //find the place in the map
+      // find the place in the map (находит место на карте)
       this.#map.setView(workout.coords, this.#mapZoomLevel, {
         animate: true,
         pan: { duration: 0.75 },
       });
     }
-    // display the weather conditions
+    // display the weather conditions (отображает данные погоды)
     this._workoutWeather(workout);
     this.shwWthrMdlWndw();
 
-    // store info about the clicked workout
     this.currentTarget = workout.id;
-
-    ///-------------------------------///
   }
 
-  //Save workouts in the local storage
+  //Save workouts in the local storage (сохраняет данные в локальном хранилище)
   _setLocalStorage() {
     localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
 
-  // Retrieve workouts from the local storage
+  // Retrieve workouts from the local storage and display it (выводит данные из хранилища и отображает их)
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
     const seen = JSON.parse(localStorage.getItem('seenInstructions'));
-    // console.log(seen);
     if (seen) seenTheInstruction = true;
     if (!data) return;
-
-    //store and render workouts (in the sidebar)
     this.#workouts = data;
     this.#workouts.forEach(wk => {
       this._renderWorkout(wk);
     });
   }
 
-  ///////////////////// MY UPDATES /////////////////////////
-
-  // Display "Delete" and "Edit" btns
+  ///////////////////// MY ADD-ONS /////////////////////////
+  /**
+   * a set of functions that display/hide elements (несколько функций отвечающих за оторажение и скрытие элементов)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // Display "Delete" and "Edit" btns (оторажает кнопки 'Delete' и 'Edit')
   _displayBtns() {
-    this.currentTargetBtns = document
-      .getElementById(this.currentTarget)
-      .querySelectorAll('.workout__details_2');
+    this.currentTargetBtns = document.getElementById(this.currentTarget).querySelectorAll('.workout__details_2');
     this.currentTargetBtns.forEach(btn => {
       btn.classList.toggle('hidden');
     });
   }
-
-  // Hide "Delete" and "Edit" btns
+  // Hide "Delete" and "Edit" btns (прячет кнопки 'Delete' и 'Edit')
   _hideBtns() {
     if (!this.currentTargetBtns) return;
     this.currentTargetBtns.forEach(btn => {
       btn.classList.add('hidden');
     });
   }
-
-  ///////  Functions for Modal Windows  ///////
-
-  // Show ConfirmationModalWindow fn
+  // Show ConfirmationModalWindow (показывает окно подтверждения запроса)
   shwMdlWndwFn() {
     modalWindowConfirm.classList.remove('hidden');
     modalWindowConfirm.style.display = 'grid';
     modalWindowConfirm.style.zIndex = '750';
     overlay.classList.remove('hidden');
   }
-
-  // Hide ConfirmationModalWindow fn
+  // Hide ConfirmationModalWindow (прячет окно подтверждения запроса)
   clsMdlWndwFn() {
     modalWindowConfirm.classList.add('hidden');
     modalWindowConfirm.style.display = 'none';
     modalWindowConfirm.style.zIndex = '1';
     overlay.classList.add('hidden');
   }
-
-  // Display ErrorModalWindow
+  // Display ErrorModalWindow (показывает окно ошибки)
   showErrorWindow(message) {
     errorMsgBox.textContent = message;
     errorWindow.classList.remove('hidden');
     errorWindow.style.zIndex = '750';
     errorWindow.style.display = 'grid';
     overlay.classList.remove('hidden');
-
     //remove focus
     document.activeElement.blur();
   }
-
+  // Hide ErrorModalWindow (прячет окно ошибки)
   _listenersErrorBtn() {
     //add listeners to close the window
     errorOkBtn.addEventListener('click', function () {
@@ -668,31 +619,25 @@ class App {
     });
   }
 
-  ///////  Functions for Editing Workouts  ///////
+  /////////////////  Functions for Editing Workouts  ////////////////////
 
-  //Add and display EditForm
+  /**
+   * allows to edit the recorded workout (позволяет корректировать сохраненные данные о тренировке)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _editWorkout(e) {
-    if (
-      !e.target.classList.contains('btn_edit') ||
-      workoutList.querySelector('.form__edit')
-    )
-      return;
-    //hide unnecessary btns
+    if (!e.target.classList.contains('btn_edit') || workoutList.querySelector('.form__edit')) return;
     this._hideBtns();
     targetWorkout = e.target.closest('.workout');
-    targetWorkoutObj = this.#workouts.find(
-      work => work.id === targetWorkout.dataset.id
-    );
-
-    //display the save changes button
+    targetWorkoutObj = this.#workouts.find(work => work.id === targetWorkout.dataset.id);
     btnSaveChanges.classList.remove('hidden');
-    //hide the workout
+    //hide the edited workout record (прячет выбранную запись тренировки)
     targetWorkout.classList.add('hidden');
-
+    // displays the edit form (отображает форму для корректировки данных)
     const editHtml = `<form class="form__edit animate">
-          <div class="form__edit__heading form__label">${
-            targetWorkoutObj.description
-          }</div>
+          <div class="form__edit__heading form__label">${targetWorkoutObj.description}</div>
           <div class="form__row">
             <label class="form__label">Type</label>
             <select class="form__input form__input--type-2">
@@ -700,16 +645,13 @@ class App {
               targetWorkoutObj.type === 'running'
                 ? `<option value="running">Running</option>
               <option value="cycling">Cycling</option>`
-                : `<option value="cycling">Cycling</option><option value="running">Running</option>
-              `
+                : `<option value="cycling">Cycling</option><option value="running">Running</option>`
             }
             </select>
           </div>
           <div class="form__row">
             <label class="form__label">Distance</label>
-            <input class="form__input form__input--distance" placeholder="km" value="${
-              targetWorkoutObj.distance
-            }"/>
+            <input class="form__input form__input--distance" placeholder="km" value="${targetWorkoutObj.distance}"/>
           </div>
           <div class="form__row">
             <label class="form__label">Duration</label>
@@ -723,72 +665,51 @@ class App {
             <input
               class="form__input form__input--cadence-2"
               placeholder="step/min"
-            value="${
-              targetWorkoutObj.cadence ? targetWorkoutObj.cadence : ''
-            }"/>
+            value="${targetWorkoutObj.cadence ? targetWorkoutObj.cadence : ''}"/>
           </div>
           <div class="form__row form__row--hidden">
             <label class="form__label">Elev Gain</label>
             <input
               class="form__input form__input--elevation-2"
               placeholder="meters"
-            value="${
-              targetWorkoutObj.elevation ? targetWorkoutObj.elevation : ''
-            }"/>
+            value="${targetWorkoutObj.elevation ? targetWorkoutObj.elevation : ''}"/>
           </div>
           <button class="form__btn">OK</button>
        </form>`;
-
-    //insert the EditForm HTML
     targetWorkout.insertAdjacentHTML('afterend', editHtml);
-
     editFormBox = workoutList.querySelector('.form__edit');
     editFormBox.scrollIntoView({ behavior: 'smooth' });
-
-    //function to toggle the workout type in the EditForm
+    //function to toggle the workout type in the EditForm (функция для смены типа тренировки в данной форме)
     const editFrmToggleFn = function () {
-      editFormBox
-        .querySelector('.form__input--cadence-2')
-        .closest('.form__row')
-        .classList.toggle('form__row--hidden');
+      editFormBox.querySelector('.form__input--cadence-2').closest('.form__row').classList.toggle('form__row--hidden');
       editFormBox
         .querySelector('.form__input--elevation-2')
         .closest('.form__row')
         .classList.toggle('form__row--hidden');
     };
-
     if (targetWorkoutObj.type === 'cycling') {
       editFrmToggleFn();
     }
-
-    //add listener to toggle the workout type field
-    editFormBox
-      .querySelector('.form__input--type-2')
-      .addEventListener('change', function () {
-        editFrmToggleFn();
-      });
+    editFormBox.querySelector('.form__input--type-2').addEventListener('change', function () {
+      editFrmToggleFn();
+    });
   }
 
+  /**
+   * saves the edited workout (сохраняет изменения в записи тренировки)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   saveChangesEditForm() {
-    //identify the chosen workout type
-    const typeToChange = editFormBox.querySelector(
-      '.form__input--type-2'
-    ).value;
-
-    // save new workout data and remove old data
-    const newDistance = +editFormBox.querySelector('.form__input--distance')
-      .value;
-    const newDuration = +editFormBox.querySelector('.form__input--duration')
-      .value;
-
+    const typeToChange = editFormBox.querySelector('.form__input--type-2').value;
+    const newDistance = +editFormBox.querySelector('.form__input--distance').value;
+    const newDuration = +editFormBox.querySelector('.form__input--duration').value;
     targetWorkoutObj.type = typeToChange;
     targetWorkoutObj.distance = newDistance;
     targetWorkoutObj.duration = newDuration;
-
     if (typeToChange === 'cycling') {
-      const newElevation = +editFormBox.querySelector(
-        '.form__input--elevation-2'
-      ).value;
+      const newElevation = +editFormBox.querySelector('.form__input--elevation-2').value;
       if (
         !this.validInput(newDistance, newDuration, newElevation) ||
         !this.allPositive(newDistance, newDuration, newElevation)
@@ -798,65 +719,56 @@ class App {
       targetWorkoutObj.elevation = newElevation;
       if (targetWorkoutObj.cadence) delete targetWorkoutObj.cadence;
       if (targetWorkoutObj.pace) delete targetWorkoutObj.pace;
-      targetWorkoutObj.speed =
-        targetWorkoutObj.distance / targetWorkoutObj.duration;
+      targetWorkoutObj.speed = targetWorkoutObj.distance / targetWorkoutObj.duration;
     }
-
     if (typeToChange === 'running') {
-      const newCadence = +editFormBox.querySelector('.form__input--cadence-2')
-        .value;
+      const newCadence = +editFormBox.querySelector('.form__input--cadence-2').value;
       if (
         !this.validInput(newDistance, newDuration, newCadence) ||
         !this.allPositive(newDistance, newDuration, newCadence)
       )
         return this.showErrorWindow('Please, enter positive numbers only.');
-
       targetWorkoutObj.cadence = newCadence;
       if (targetWorkoutObj.elevation) delete targetWorkoutObj.elevation;
       if (targetWorkoutObj.speed) delete targetWorkoutObj.speed;
-      targetWorkoutObj.pace =
-        targetWorkoutObj.duration / targetWorkoutObj.distance;
+      targetWorkoutObj.pace = targetWorkoutObj.duration / targetWorkoutObj.distance;
     }
-
-    //remove all workouts from HTML (sidebar)
+    // updates the list based on the introduced changes and saves data (обновляет список и сохраняет данные)
     this.clearSidebar();
-    //remove the EditForm
     editFormBox.remove();
-    //save the updated workout array in the Local Storage
     this._setLocalStorage();
-    //hide the button
     btnSaveChanges.classList.add('hidden');
-    //Re-render all workouts again
     this.reRendering(this.#workouts);
   }
 
-  // Remove EditForm HTML and show the workout
+  /**
+   * hides the edit form and display the initial record (прячет форму для изменения записи тренировки и возращает саму запись)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   editFormRemove() {
     workoutList.querySelector('.form__edit').remove();
     btnSaveChanges.classList.add('hidden');
-    //Make the edited workout visible again
     containerWorkouts.querySelectorAll('.workout').forEach(wk => {
       if (wk.classList.contains('hidden')) wk.classList.remove('hidden');
     });
   }
-
-  // Close EditForm
+  //tied to the previous one (связана с предыдущей)
   clsEdtWndwFn(e) {
-    if (
-      !workoutList.querySelector('.form__edit') ||
-      e.target.classList.contains('.form__edit')
-    )
-      return;
+    if (!workoutList.querySelector('.form__edit') || e.target.classList.contains('.form__edit')) return;
     this.editFormRemove();
-    // btnSaveChanges.classList.add('hidden');
   }
 
-  ///////  Functions for Deleting Workouts  ///////
-
-  // Display ConfirmationModalWindow and store data
+  /**
+   * functions for deleting workout records (ряд функций для удаления записей)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // Display ConfirmationModalWindow 9отображает диалоговое окно)
   _confirmDelete(e) {
     if (!e.target.classList.contains('btn_delete')) return;
-
     this.shwMdlWndwFn();
     //find index of the workout we plan to delete
     for (let work of this.#workouts) {
@@ -865,8 +777,7 @@ class App {
       }
     }
   }
-
-  // Get confirmation through the ConfirmationModalWindow
+  // Get confirmation through the ConfirmationModalWindow (получает подтверждение или отмену удаления)
   cancelOrDlt(e) {
     if (modalWindowConfirm.classList.contains('hidden')) return;
     if (e.target === modalCancelBtn) {
@@ -876,7 +787,6 @@ class App {
     if (e.key === 'Escape') {
       this.clsMdlWndwFn();
     }
-
     //Delete - delete workout
     if (e.target === modalDeleteBtn) {
       this._deleteWorkout();
@@ -886,62 +796,61 @@ class App {
     }
   }
 
-  // Delete the chosen workout
+  /**
+   * deletes one workout record and updates storage and UI (удаляет запись тренировки и обновляет хранилище и UI)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _deleteWorkout() {
-    //remove all workouts from the sidebar
     this.clearSidebar();
-    //remove workout from the database
     this.#workouts.splice(this.indexDeletingItem, 1);
-    //save the updated workout array in Local Storage
     this._setLocalStorage();
-    //Re-render all workouts
     this.reRendering(this.#workouts);
-    //close ConfirmationModalWindow
     this.clsMdlWndwFn();
-    //close weatherModalWindow
     this.clsWthrMdlWndw();
     if (this.#workouts.length === 0) {
       this.removeButtons();
     }
   }
 
-  // Delete all workout and Clear the Map
+  /**
+   * deletes all workout records and updates storage and UI (удаляет все записи тренировок и обновляет хранилище и UI)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _deleteAllWorkouts() {
-    //modify the ConfirmationModalWindow
-    confirmPhrase.innerHTML =
-      'Are you sure you want to delete all workout records?';
+    confirmPhrase.innerHTML = 'Are you sure you want to delete all workout records?';
     this.shwMdlWndwFn();
     modalWindowConfirm.addEventListener(
       'click',
       function (e) {
         if (e.target.closest('.modal__btn__cancel')) {
           this.clsMdlWndwFn();
-          confirmPhrase.innerHTML =
-            'Are you sure you want to delete this workout record?';
+          confirmPhrase.innerHTML = 'Are you sure you want to delete this workout record?';
         }
         if (e.target.closest('.modal__btn__delete')) {
-          //clear the map
           this.clearMap();
-          //empty the workouts array
           this.#workouts = [];
-          //empty the storage
           localStorage.removeItem('workouts');
-          //Remove workouts from HTML (sidebar)
           this.clearSidebar();
-          //remove Sort and DeleteAll btns
           this.removeButtons();
-          //set ConfirmationModalWIndow to default
           this.clsMdlWndwFn();
-          confirmPhrase.innerHTML =
-            'Are you sure you want to delete this workout record?';
+          confirmPhrase.innerHTML = 'Are you sure you want to delete this workout record?';
         }
       }.bind(this),
       { once: true }
     );
   }
 
-  ///////  Supporting Functions  ///////
-
+  /**
+   * a set of function for UI elements manipulations and responsiveness (функции для манипуляции UI элементами и адаптивности)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // checks viewport width (проверяет ширину используемого экрана)
   _checkWidth() {
     if (window.innerWidth <= 641) {
       sidebar.style.visibility = 'hidden';
@@ -951,7 +860,7 @@ class App {
       sidebar.style.opacity = 1;
     }
   }
-
+  // hides workout list (прячет список тренировок)
   _hideSidebarSoon() {
     setTimeout(
       function () {
@@ -961,7 +870,7 @@ class App {
       300
     );
   }
-
+  // toggles workout list (прячет/возвращает список тренировок)
   _toggleWindow() {
     if (sidebar.style.visibility === 'hidden') {
       sidebar.style.visibility = 'visible';
@@ -971,21 +880,25 @@ class App {
       sidebar.style.opacity = 0;
     }
   }
-
+  // displays workout list btns (отображает кнопки из списка тренировок)
   displayButtons() {
     sortBtn.classList.remove('hidden');
     deleteAllBtn.classList.remove('hidden');
     showAllBtn.classList.remove('hidden');
   }
-
-  //Hide the buttons
+  // hides workout list btns (прячет кнопки из списка тренировок)
   removeButtons() {
     sortBtn.classList.add('hidden');
     deleteAllBtn.classList.add('hidden');
     showAllBtn.classList.add('hidden');
   }
 
-  //Make all workouts viewed at a time in the map
+  /**
+   * display all the workouts at once (показывает сразу все тренировки на карте)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _showAllWorkouts() {
     //hide unnecessary windows
     this.clsWthrMdlWndw();
@@ -1013,33 +926,26 @@ class App {
     this._hideSidebarSoon();
   }
 
-  //Remove all workouts from the Sidebar
+  /**
+   * set of supporting function for removing content from the list and the map (несколько вспомогательных функций для удаления контента в списке и на карте)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // removes all records from the list (удаляет все записи из списка тренировок)
   clearSidebar() {
     workoutList.querySelectorAll('.workout').forEach(elem => {
       elem.remove();
     });
   }
-
-  //Color each workout back
-  defaultColor() {
-    containerWorkouts
-      .querySelectorAll('.workout')
-      .forEach(wk => (wk.style.backgroundColor = '#42484d'));
-  }
-
-  // Remove all markers and paths from the map and the database
+  // remove all markers and paths from the map and the database (удаляет данные из хранилища и с карты)
   clearMap() {
-    //remove markers from the map
     this.#allMarkers.forEach(marker => marker.remove());
-    //remove paths from the map
     this.#allPaths.forEach(path => path.remove());
-    //empty the markers array
     this.#allMarkers = [];
-    //empty paths array
     this.#allPaths = [];
   }
-
-  // Re-render workouts after editing and deleting
+  // re-render workouts after editing and deleting (обновляет вид записей тренировок)
   reRendering(array) {
     //clear the map
     this.clearMap();
@@ -1050,113 +956,104 @@ class App {
       this._renderWorkoutPath(wk);
     });
   }
+  // сolor each workout back (возвращает списку изначальные стили)
+  defaultColor() {
+    containerWorkouts.querySelectorAll('.workout').forEach(wk => (wk.style.backgroundColor = '#42484d'));
+  }
 
   ///////  Functions for Sorting Workouts  ///////
 
-  // Display dropDown menu to choose the sorting type
+  /**
+   * display sorting options and prepare UI elements (отображает меню сортировки и подготавливает UI элементы)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   openTypeMenu() {
-    //close all unnecessary forms
+    //close all unnecessary forms (прячет все ненужные формы и окна)
     form.classList.add('hidden');
     this._hideBtns();
     this.clsDrwngWndw();
     this.clsMdlWndwFn();
     if (workoutList.querySelector('.form__edit')) {
       this.editFormRemove();
-      // btnSaveChanges.classList.add('hidden');
     }
-    //check if the list is not sorted
+    //check if the list is not sorted (проверяет, сортирован ли список на данный момент)
     if (this.sorted === false) {
-      //display the dropDown menu and add the oneTime listener
       dropMenu.classList.add('drop_class');
       dropMenu.addEventListener('click', this._sortWorkouts.bind(this));
-
-      //also, make the dropDown disappear, if not clicked
       setTimeout(function () {
         document.addEventListener(
           'click',
           function (t) {
-            if (t.target !== dropMenu && t.target !== sortBtn)
-              dropMenu.classList.remove('drop_class');
+            if (t.target !== dropMenu && t.target !== sortBtn) dropMenu.classList.remove('drop_class');
           },
           { once: true }
         );
       }, 10);
     } else {
-      //if sorted, change the button content
+      //if sorted, unsoft and return default parameters (если список уже сортирован, возвращает изначальные значения)
       this.sorted = false;
       sortBtn.innerHTML = 'Sort by';
-      //remove sorted workouts
       this.clearSidebar();
-      //display unsorted workouts
       this.#workouts.forEach(wk => {
         this._renderWorkout(wk);
       });
     }
   }
 
-  // Sort workouts in the Sidebar
+  /**
+   * sorts the workout list based on user's choice (сортирует список по параметрам выбранным пользователем)
+   * @param {event object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _sortWorkouts(e) {
     if (!e.target.closest('.btn__sort')) return;
-
-    //save the sorting choice
     const chosenType = e.target.closest('.btn__sort').dataset.sorting;
-    //sort according to the user's choice
     if (chosenType === 'distance') {
-      this.#sortedBy = this.#workouts
-        .slice()
-        .sort((a, b) => b.distance - a.distance);
+      this.#sortedBy = this.#workouts.slice().sort((a, b) => b.distance - a.distance);
     }
     if (chosenType === 'duration') {
-      this.#sortedBy = this.#workouts
-        .slice()
-        .sort((a, b) => b.duration - a.duration);
+      this.#sortedBy = this.#workouts.slice().sort((a, b) => b.duration - a.duration);
     }
-
     if (chosenType === 'type') {
       const onlyRunning = this.#workouts.filter(wk => wk.type === 'running');
       const onlyCycling = this.#workouts.filter(wk => wk.type === 'cycling');
-
       this.#sortedBy = onlyRunning.concat(onlyCycling);
     }
-
-    //empty the list
     this.clearSidebar();
-    //display sorted workouts
     this.#sortedBy.forEach(wk => {
       this._renderWorkout(wk);
-
-      //close the dropDown menu
       dropMenu.classList.remove('drop_class');
       sortBtn.innerHTML = 'Unsort';
     });
-
-    //add the value to refer, when SortBtn is pressed
     this.sorted = true;
   }
 
-  // Activate drawing a path on the map
-  _drawPath() {
-    //start drawing the Path (add listener)
-    this._toggleDrawingListener();
-  }
-
+  /**
+   * allows user to draw the workout path. if he wants (позволяет пользователю нарисовать маршрут тренировки)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _toggleDrawingListener() {
+    // removes event listener added to the map once drawing is over or cancelled (отключает приемник событий на карте, когда прорисовка маршрута завершена или отмененаа)
     const offListener = function () {
       this.#map.off('click', gainCoords);
-      // console.log('I am off now');
+      drawCancelStroke.style.display = 'none';
     }.bind(this);
 
     const gainCoords = function (mapEv) {
       if (!drawingFinished) {
-        //get the click coordinates
+        if (drawCancelStroke.style.display !== 'block') drawCancelStroke.style.display = 'block';
         const { lat, lng } = mapEv.latlng;
-        //save the new coords
+        //save the added coords (сохраняет добавленные координаты)
         this.pathwayCoords.push([lat, lng]);
-        // console.log(this.pathwayCoords);
         if (this.pathwayWorkout) {
           this.pathwayWorkout.remove();
         }
-        //display the line (update the polyline after every click)
+        // update the polyline after every click (обновляет маршрут после каждого нажатия)
         this.pathwayWorkout = L.polyline(this.pathwayCoords, {
           color: 'red',
           smoothfactor: 5,
@@ -1164,8 +1061,7 @@ class App {
           lineJoin: 'round',
           lineCap: 'round',
         }).addTo(this.#map);
-
-        //count distance between point to measure the total distance
+        //count distance between point to measure the total distance (просчитывает длину маршрута)
         if (this.pathwayCoords.length >= 2) {
           const addDistance =
             this.#map.distance(
@@ -1173,33 +1069,31 @@ class App {
               this.pathwayCoords[this.pathwayCoords.length - 2]
             ) / 1000;
           this.pathDistance += addDistance;
-          //display it in the new workout form
           inputDistance.value = +this.pathDistance.toFixed(1);
         }
       }
       if (drawingFinished) offListener();
     }.bind(this);
-
+    // adds event listener to the map to draw the workout path (добавляет приемник событий на карту, чтобы накладывать маршрут)
     this.#map.on('click', gainCoords);
     drawingProcess = true;
-    // console.log('I am on now');
   }
 
+  /**
+   * adds listeners at the page load (добавляет ряд примников событий при загрузке приложения)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _listenersCancelDrawing() {
-    //adding cancelling listeners
     document.addEventListener(
       'click',
       function (e) {
-        if (
-          (!form.classList.contains('hidden') &&
-            e.target.closest('.workout')) ||
-          e.target.closest('.dropdown')
-        ) {
+        if ((!form.classList.contains('hidden') && e.target.closest('.workout')) || e.target.closest('.dropdown')) {
           this._cancelDrawing();
         }
       }.bind(this)
     );
-    //and buttons
     document.addEventListener(
       'keydown',
       function (e) {
@@ -1218,32 +1112,67 @@ class App {
     );
   }
 
-  // Cancel workout
+  /**
+   * allows user modify the drawn path by removing the strokes (позволяет пользователю перерисовывать маршрут)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  _cancelLastDrawingLine() {
+    if (this.pathwayCoords.length === 2) return this._cancelDrawing();
+    //first count the last distance that we want to cut off (отсчитывает расстояние, которое было отменено/убрано)
+    if (this.pathwayCoords.length >= 2) {
+      const removeDistance =
+        this.#map.distance(
+          this.pathwayCoords[this.pathwayCoords.length - 1],
+          this.pathwayCoords[this.pathwayCoords.length - 2]
+        ) / 1000;
+      this.pathDistance -= removeDistance;
+      inputDistance.value = +this.pathDistance.toFixed(1);
+    }
+    //remove the last stroke record (удаляет последний нанесенный штрих)
+    this.pathwayCoords.pop();
+    if (this.pathwayWorkout) {
+      this.pathwayWorkout.remove();
+    }
+    // update the polyline after every click (обновляет маршрут)
+    this.pathwayWorkout = L.polyline(this.pathwayCoords, {
+      color: 'red',
+      smoothfactor: 5,
+      weight: 8,
+      lineJoin: 'round',
+      lineCap: 'round',
+    }).addTo(this.#map);
+  }
+
+  /**
+   * set of supporting functions for path drawing feature (ряд функций для работы с наложением маршрута)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // removes the workout record form (скрывает форму для записи тренировки)
   _cancelDrawing() {
-    //clear and close the form
     if (!form.classList.contains('hidden')) {
       this._clearForm();
     }
     this._setDefaultDrawingParameters();
   }
-
+  // returns parameters to default values (возвращает изначальные параметры)
   _setDefaultDrawingParameters() {
     if (this.pathwayWorkout) {
       this.pathwayWorkout.remove();
     }
-    //empty the pathway coords array and set default values
     this.pathwayCoords = [];
     this.pathwayWorkout = false;
     this.pathDistance = 0;
   }
-
-  //Show the drawing window
+  // show the drawing window (отображает диалоговое окно)
   shwDrwngWndw() {
     drawWindow.style.display = 'flex';
     drawWindow.style.zIndex = '500';
   }
-
-  //Hide the drawing window
+  // hide the drawing window (скрывает диалоговое окно)
   clsDrwngWndw() {
     if (drawWindow.style.display === 'none') return;
     drawWindow.style.display = 'none';
@@ -1252,18 +1181,22 @@ class App {
 
   //////////////// Weather Functions //////////////
 
-  // Determine weather
+  /**
+   * determines the weather conditions in the given location (определяет погоду в выбранной локации)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   async _localWeather(wk) {
     try {
-      //find info through the API
+      // find info through the API (ищет информацию с помощью API)
       const curWeather = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${wk.coords[0]}&longitude=${wk.coords[1]}&current_weather=true`
       ).then(res => res.json());
-      //set new parameters to the variables in the object
+      //set new parameters to the variables in the object (сохраняет данные о погоде)
       wk.temperature = curWeather.current_weather.temperature;
       wk.windspeed = curWeather.current_weather.windspeed;
       wk.weathercode = curWeather.current_weather.weathercode;
-      //render the workout in the weatherModalWindow
       this._workoutWeather(wk);
     } catch (err) {
       weatherDesc.textContent = `Couldn't collect weather data. Please, check your internet conection.`;
@@ -1296,85 +1229,83 @@ class App {
     weatherCond.textContent = '';
   }
 
-  // Render weatherModalWindow
+  /**
+   * render the workout in the weatherModalWindow (рендерит тренировку и погодные данные)
+   * @param {object}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   _workoutWeather(workout) {
-    //first, close and clear the window
     this.clsWthrMdlWndw();
-    //check, if the weather records exist
     if (!workout.temperature) {
       weatherDesc.textContent = 'No weather records found';
       this.shwWthrMdlWndw();
       return;
     }
-    //set values in the weatherModalWindow
     weatherDesc.textContent = 'That day';
     weatherTemp.textContent = `${workout.temperature}`;
     weatherWind.textContent = `${workout.windspeed}`;
-    //find the proper weather condition in the common object
+    //find the proper weather condition in the common object (находит название погодных условий в списке)
     let index = Object.keys(wmo).indexOf(`${workout.weathercode}`);
     weatherCond.textContent = `${Object.values(wmo)[index]}`;
     this.shwWthrMdlWndw();
   }
-  ////////-------------------------------////////
 
-  // Empty the Local Storage and reload the page
-  reset() {
-    localStorage.removeItem('workouts');
-    location.reload();
-  }
-
+  /**
+   * functions for a dialogue window in mobile version (функции для диалогового окна в мобильной версии)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
   agreedToDraw() {
     this._showForm(tempMapE);
     strategyWindow.classList.add('hidden');
     overlay.classList.add('hidden');
   }
-
   disagreedToDraw() {
     this._toggleWindow();
     this._showForm(tempMapE);
     strategyWindow.classList.add('hidden');
     overlay.classList.add('hidden');
   }
-
   cancelTheRecord() {
     this._clearForm();
     strategyWindow.classList.add('hidden');
     overlay.classList.add('hidden');
   }
 
-  //instructions window related functions
+  /**
+   * functions for instructions window (функции для окна с инструкциями)
+   * @param {}
+   * @returns {undefined}
+   * @author Dmitriy Vnuchkov
+   */
+  // remembers if instructions have been read (запоминает, читали ли инструкции раньше)
   instructionsHideRemember() {
     if (seenTheInstruction === false) {
       seenTheInstruction = true;
-      localStorage.setItem(
-        'seenInstructions',
-        JSON.stringify(seenTheInstruction)
-      );
+      localStorage.setItem('seenInstructions', JSON.stringify(seenTheInstruction));
     }
     windowInstructions.classList.remove('instructions-window__shown');
     overlay.classList.add('hidden');
   }
-
   displayInstructions() {
     windowInstructions.classList.add('instructions-window__shown');
     overlay.classList.remove('hidden');
   }
-
   overlayClicks() {
     if (windowInstructions.classList.contains('instructions-window__shown')) {
       windowInstructions.classList.remove('instructions-window__shown');
       overlay.classList.add('hidden');
     }
   }
+
+  // Empty the Local Storage and reload the page (for developers) удалить данные о тренировках (для разработчика)
+  // reset() {
+  //   localStorage.removeItem('workouts');
+  //   location.reload();
+  // }
 }
 
-//Run the App written above
+//Run the App written above (запускает приложение)
 const app = new App();
-
-// Object.keys(window).forEach(key => {
-//   if (/^on/.test(key)) {
-//     window.addEventListener(key.slice(2), event => {
-//       console.log(event);
-//     });
-//   }
-// });

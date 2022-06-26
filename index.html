@@ -2,18 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-      user-scalable="no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" user-scalable="no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="shortcut icon" type="image/png" href="/icon.png" />
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="style.css" />
     <link
@@ -36,38 +29,30 @@
       <p class="instructions-window__title">How to use Mapty</p>
       <ul class="instructions-window__list">
         <li class="instructions-window__list-item">
-          To record a new cycling/running workout, just tap the map in the
-          place, where you did that workout.
+          To record a new cycling/running workout, just tap the map in the place, where you did that workout.
         </li>
         <li class="instructions-window__list-item">
-          If you wish, you can draw a workout path. Then, keep tapping the map
-          to draw a red line. The distance will be counted automatically.
+          If you wish, you can draw a workout path. Then, keep tapping the map to draw a red line. The distance will be
+          counted automatically.
         </li>
         <li class="instructions-window__list-item">
-          In case you are not satisfied with the path, you can remove it by
-          tapping 'Cancel' button and draw it again.
+          In case you are not satisfied with the path, you can remove it by tapping 'Cancel' button and draw it again.
         </li>
-        <li class="instructions-window__list-item">
-          Behind the sandwich button, you will find a list of workouts.
-        </li>
+        <li class="instructions-window__list-item">Behind the sandwich button, you will find a list of workouts.</li>
         <li class="instructions-window__list-item">
           To see the workout location/path, tap this workout record in the list.
         </li>
         <li class="instructions-window__list-item">
-          If you want to edit or delete the workout, tap it once again and press
-          the corresponding button.
+          If you want to edit or delete the workout, tap it once again and press the corresponding button.
         </li>
         <li class="instructions-window__list-item">
-          You can focus on all workouts in the map at once, focus on your
-          current location, and sort or delete all workouts in the list.
+          You can focus on all workouts in the map at once, focus on your current location, and sort or delete all
+          workouts in the list.
         </li>
         <li class="instructions-window__list-item">
-          You do not need to sign up. All the workouts data are saved in your
-          browser and take almost no space.
+          You do not need to sign up. All the workouts data are saved in your browser and take almost no space.
         </li>
-        <li class="instructions-window__list-item">
-          If you want to read this note again, tap the Mapty logo.
-        </li>
+        <li class="instructions-window__list-item">If you want to read this note again, tap the Mapty logo.</li>
       </ul>
       <p class="instructions-window__closure">Enjoy it!</p>
       <button class="instructions-window__button" type="button">Got it</button>
@@ -81,23 +66,16 @@
       <div class="image-block">
         <img src="logo.png" alt="Logo" class="logo" />
       </div>
-      <button class="btn_save_changes hidden" type="button">
-        Save Changes
-      </button>
+      <button class="btn_save_changes hidden" type="button">Save Changes</button>
       <button class="btn_cancel_draw_extra hidden" type="button">Cancel</button>
+      <button class="btn_cancel_stroke_extra hidden" type="button">Cancel stroke</button>
       <button class="save_workout-extra hidden" type="button">Save it</button>
-      <!-- <button class="toggle-button">
-        <span class="toggle-button__bar"></span>
-        <span class="toggle-button__bar"></span>
-        <span class="toggle-button__bar"></span>
-      </button> -->
     </div>
     <div class="sidebar">
       <div class="dropdown">
         <div class="delete_all btn__style hidden">Delete all</div>
         <div class="show_all btn__style hidden">Show all</div>
         <div class="dropbtn btn__style hidden">Sort by</div>
-        <!-- <div class="work__now btn__style">I workout Now</div> -->
         <div class="dropdown-content">
           <div class="btn__sort" data-sorting="distance">Distance</div>
           <div class="btn__sort" data-sorting="duration">Duration</div>
@@ -120,87 +98,25 @@
           </div>
           <div class="form__row">
             <label class="form__label">Duration</label>
-            <input
-              class="form__input form__input--duration"
-              placeholder="min"
-            />
+            <input class="form__input form__input--duration" placeholder="min" />
           </div>
           <div class="form__row">
             <label class="form__label">Cadence</label>
-            <input
-              class="form__input form__input--cadence"
-              placeholder="step/min"
-            />
+            <input class="form__input form__input--cadence" placeholder="step/min" />
           </div>
           <div class="form__row form__row--hidden">
             <label class="form__label">Elev Gain</label>
-            <input
-              class="form__input form__input--elevation"
-              placeholder="meters"
-            />
+            <input class="form__input form__input--elevation" placeholder="meters" />
           </div>
           <button class="form__btn">OK</button>
         </form>
-
-        <!-- <li class="workout workout--running" data-id="1234567890">
-          <h2 class="workout__title">Running on April 14</h2>
-          <div class="workout__details">
-            <span class="workout__icon">🏃‍♂️</span>
-            <span class="workout__value">5.2</span>
-            <span class="workout__unit">km</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">⏱</span>
-            <span class="workout__value">24</span>
-            <span class="workout__unit">min</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">⚡️</span>
-            <span class="workout__value">4.6</span>
-            <span class="workout__unit">min/km</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">🦶🏼</span>
-            <span class="workout__value">178</span>
-            <span class="workout__unit">spm</span>
-          </div>
-        </li>
-
-        <li class="workout workout--cycling" data-id="1234567891">
-          <h2 class="workout__title">Cycling on April 5</h2>
-          <div class="workout__details">
-            <span class="workout__icon">🚴‍♀️</span>
-            <span class="workout__value">27</span>
-            <span class="workout__unit">km</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">⏱</span>
-            <span class="workout__value">95</span>
-            <span class="workout__unit">min</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">⚡️</span>
-            <span class="workout__value">16</span>
-            <span class="workout__unit">km/h</span>
-          </div>
-          <div class="workout__details">
-            <span class="workout__icon">⛰</span>
-            <span class="workout__value">223</span>
-            <span class="workout__unit">m</span>
-          </div>
-        </li> -->
       </ul>
 
       <p class="copyright">
         &copy; Copyright by
-        <a
-          class="twitter-link"
-          target="_blank"
-          href="https://twitter.com/jonasschmedtman"
-          >Jonas Schmedtmann</a
-        >
-        (Add-ons by Dmitriy Vnuchkov). Use for learning or your portfolio. Don't
-        use to teach. Don't claim as your own.
+        <a class="twitter-link" target="_blank" href="https://twitter.com/jonasschmedtman">Jonas Schmedtmann</a>
+        (Build, add-ons and deployment by Dmitriy Vnuchkov). Use for learning or your portfolio. Don't use to teach.
+        Don't claim as your own.
       </p>
     </div>
 
@@ -208,17 +124,11 @@
     <!--         MY DETAILS         -->
     <div class="window confirm hidden">
       <div>
-        <p class="confirm_content">
-          Are you sure you want to delete this workout record?
-        </p>
+        <p class="confirm_content">Are you sure you want to delete this workout record?</p>
       </div>
       <div class="modal__btns">
-        <button class="btn__style modal__btn__delete" type="button">
-          Delete
-        </button>
-        <button class="btn__style modal__btn__cancel" type="button">
-          Cancel
-        </button>
+        <button class="btn__style modal__btn__delete" type="button">Delete</button>
+        <button class="btn__style modal__btn__cancel" type="button">Cancel</button>
       </div>
     </div>
     <div class="window error_window hidden">
@@ -235,25 +145,21 @@
         <ul class="instructions">
           <li>Press 'Escape' or 'Cancel' to cancel the workout.</li>
           <li>You may click on the map again to draw the workout path.</li>
-          <li>
-            Type in the workout data and press 'Save it' or 'Enter' to save.
-          </li>
+          <li>Type in the workout data and press 'Save it' or 'Enter' to save.</li>
         </ul>
       </div>
       <div class="modal__btns">
         <button class="save_workout" type="button">Save it</button>
-        <!-- <button class="btn__style btn_erase_draw hidden" type="button">
-          Erase
-        </button> -->
+        <button class="btn__style btn_cancel_stroke" type="button">Cancel stroke</button>
         <button class="btn__style btn_cancel_draw" type="button">Cancel</button>
       </div>
     </div>
     <div class="weather__window hidden">
       <span class="weather__desc">Weather information loading...</span> <br />
-      <span class="weather__data hidden">Temperature: </span
-      ><span class="weather__temp weather__data hidden"></span><br />
-      <span class="weather__data hidden">Windspeed: </span
-      ><span class="weather__wind weather__data hidden"></span><br />
+      <span class="weather__data hidden">Temperature: </span><span class="weather__temp weather__data hidden"></span
+      ><br />
+      <span class="weather__data hidden">Windspeed: </span><span class="weather__wind weather__data hidden"></span
+      ><br />
       <span class="weather__data hidden">Weather Conditions: </span
       ><span class="weather__cond weather__data hidden"></span>
     </div>
@@ -261,20 +167,13 @@
     <div class="define__strategy hidden">
       <div>
         <p class="strategy__content">
-          Great! One more workout record is on its way. Do you want to draw the
-          workout path?
+          Great! One more workout record is on its way. Do you want to draw the workout path?
         </p>
       </div>
       <div class="strategy__btns--container">
-        <button class="btn__strategy strategy__btn--draw" type="button">
-          Draw
-        </button>
-        <button class="btn__strategy strategy__btn--notdraw" type="button">
-          Do not Draw
-        </button>
-        <button class="btn__strategy strategy__btn--cancel" type="button">
-          Cancel
-        </button>
+        <button class="btn__strategy strategy__btn--draw" type="button">Draw</button>
+        <button class="btn__strategy strategy__btn--notdraw" type="button">Do not Draw</button>
+        <button class="btn__strategy strategy__btn--cancel" type="button">Cancel</button>
       </div>
     </div>
     <div class="blockeverything hidden"></div>

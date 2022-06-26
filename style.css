@@ -174,7 +174,8 @@ a:visited {
 }
 
 .btn_cancel_draw_extra,
-.btn_save_changes {
+.btn_save_changes,
+.btn_cancel_stroke_extra {
   background-color: var(--color-light--1);
   color: #2d3439;
   font-size: 1.7rem;
@@ -185,6 +186,12 @@ a:visited {
   margin-right: 1rem;
   font-weight: 600;
   box-shadow: -3px 0 3px #2f3832;
+}
+
+.btn_cancel_stroke_extra {
+  font-size: 1.2rem !important;
+  line-height: 0.9;
+  padding: 0.3rem 0.6rem;
 }
 
 .btn_cancel_draw_extra {
@@ -535,7 +542,7 @@ a:visited {
   border-radius: 0.5rem;
   cursor: pointer;
   padding: 0.6rem;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   font-weight: 600;
   box-shadow: -3px 0 3px #2f3832;
   /* transition: all 0.2s; */
@@ -543,6 +550,10 @@ a:visited {
 
 .btn__style:hover {
   background-color: var(--color-light--2);
+}
+
+.btn_cancel_stroke {
+  display: none;
 }
 
 .save_workout {
@@ -555,7 +566,7 @@ a:visited {
   border-radius: 0.5rem;
   cursor: pointer;
   padding: 0.6rem;
-  /* margin-right: 0.8rem; */
+  margin-right: 0.4rem;
   font-weight: 600;
   box-shadow: -3px 0 3px #2f3832;
 }
@@ -823,7 +834,8 @@ a:visited {
   }
 
   .save_workout-extra,
-  .btn_cancel_draw_extra {
+  .btn_cancel_draw_extra,
+  .btn_cancel_stroke_extra {
     width: 14rem;
     height: 3rem;
     visibility: visible;
@@ -1136,7 +1148,8 @@ a:visited {
   }
 
   .save_workout-extra,
-  .btn_cancel_draw_extra {
+  .btn_cancel_draw_extra,
+  .btn_cancel_stroke_extra {
     width: 14rem;
     height: 3rem;
     visibility: visible;
